@@ -18,3 +18,16 @@ pnpm dev
 # how to build and serve
 ```
 
+### Game loop
+
+What is a game loop?
+
+Implement a basic game loop using requestAnimationFrame.
+
+#### tempalte npm:
+
+degit justin-calleja/template-vite#fix-log-level ./gameloop
+
+#### tempalte pnpm:
+
+degit justin-calleja/template-vite#with-pnpm ./gameloop
