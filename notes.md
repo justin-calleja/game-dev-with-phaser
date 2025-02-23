@@ -1,6 +1,6 @@
 ## Getting started
 
-### template-vite
+### 01-template-vite
 
 ```sh
 degit phaserjs/template-vite ./hello-phaser
@@ -18,16 +18,12 @@ pnpm dev
 # how to build and serve
 ```
 
-### Game loop
+### 02-gameloop
 
 What is a game loop?
 
 Implement a basic game loop using requestAnimationFrame.
 
-#### tempalte npm:
-
-degit justin-calleja/template-vite#fix-log-level ./gameloop
-
-#### tempalte pnpm:
-
-degit justin-calleja/template-vite#with-pnpm ./gameloop
+```sh
+degit justin-calleja/template-vite#with-pnpm-no-log ./game-dev-with-phaser/01-gameloop
+```

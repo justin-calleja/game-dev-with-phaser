@@ -1,9 +1,9 @@
 const canvas =
-  /** @type{HTMLCanvasElement} */
-  (document.getElementById("game-canvas"));
+  /** @type {HTMLCanvasElement} */
+  (document.getElementById("canvas"));
 
 const ctx =
-  /** @type{CanvasRenderingContext2D} */
+  /** @type {CanvasRenderingContext2D} */
   (canvas.getContext("2d"));
 
 const scene1 = {
@@ -12,7 +12,7 @@ const scene1 = {
     y: canvas.height / 2,
     width: 50,
     height: 50,
-    speed: 10,
+    speed: 15,
   },
 
   update() {
@@ -23,7 +23,7 @@ const scene1 = {
   },
 
   render() {
-    ctx.fillStyle = "#f96161";
+    ctx.fillStyle = "#F96161";
     ctx.fillRect(
       this.player.x,
       this.player.y,
@@ -34,7 +34,7 @@ const scene1 = {
 };
 
 const scene2 = {
-  text: "Placeholder text",
+  text: "hello world",
 
   update() {},
 
@@ -47,12 +47,26 @@ const scene2 = {
 };
 
 const game = {
-  currentScene: scene1,
-};
+    currentScene: scene1,
+}
 
-function gameLoop() {
-  // erase previous frame:
-  ctx.fillStyle = "#e1e9b7";
+canvas.addEventListener("click", () => {
+    // @ts-ignore
+    game.currentScene = game.currentScene === scene1 ? scene2 : scene1;
+})
+
+let lastTime = 0;
+const fpsLimit = 1000 / 30;
+
+function gameLoop(timestamp) {
+  const deltaTime = timestamp - lastTime;
+
+  if (deltaTime < fpsLimit) {
+    return requestAnimationFrame(gameLoop);
+  }
+  lastTime = timestamp;
+
+  ctx.fillStyle = "#E1E9B7";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   game.currentScene.update();
@@ -61,13 +75,7 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
-canvas.addEventListener("click", () => {
-  // @ts-ignore
-  game.currentScene = game.currentScene === scene1 ? scene2 : scene1;
-});
-
 function main() {
-  // init game
   requestAnimationFrame(gameLoop);
 }
 

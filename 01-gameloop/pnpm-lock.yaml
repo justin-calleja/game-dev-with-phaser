@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       phaser:
-        specifier: ^3.88.0
+        specifier: ^3.88.2
         version: 3.88.2
     devDependencies:
       terser:
