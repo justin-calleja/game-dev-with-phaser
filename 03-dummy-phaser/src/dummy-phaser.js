@@ -1,12 +1,4 @@
-const canvas =
-  /** @type {HTMLCanvasElement} */
-  (document.getElementById("canvas"));
-
-const ctx =
-  /** @type {CanvasRenderingContext2D} */
-  (canvas.getContext("2d"));
-
-class RectGameObject {
+export class RectGameObject {
   constructor(x, y, width, height, color) {
     this.x = x;
     this.y = y;
@@ -15,15 +7,31 @@ class RectGameObject {
     this.color = color;
   }
 
-  draw() {
+  /**
+   * Draws the rectangle on the provided canvas context.
+   * @param {CanvasRenderingContext2D} ctx - The rendering context.
+   */
+  draw(ctx) {
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.width, this.height);
   }
 }
 
-// this.add.text(0, 0, 'Hello World', { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' });
-// this.add.text(0, 0, 'Hello World', { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' });
-class TextGameObject {
+/**
+ * Defines the style properties for text rendering.
+ *
+ * @typedef {Object} TextStyle
+ * @property {string} color - The color of the text (e.g., "#ff0000" for red).
+ * @property {string} font - The font style (e.g., "20px Arial").
+ */
+
+export class TextGameObject {
+  /**
+   * @param {number} x - The x-coordinate of the text.
+   * @param {number} y - The y-coordinate of the text.
+   * @param {string} text - The text content to be displayed.
+   * @param {TextStyle} style - The style configuration for the text.
+   */
   constructor(x, y, text, style) {
     this.x = x;
     this.y = y;
@@ -31,7 +39,11 @@ class TextGameObject {
     this.style = style;
   }
 
-  draw() {
+  /**
+   * Draws the rectangle on the provided canvas context.
+   * @param {CanvasRenderingContext2D} ctx - The rendering context.
+   */
+  draw(ctx) {
     ctx.fillStyle = this.style.color;
     ctx.font = this.style.font;
     ctx.fillText(this.text, this.x, this.y);
@@ -43,27 +55,33 @@ class GameObjectFactory {
     this.scene = scene;
   }
 
-  // rectangle(x?: number, y?: number, width?: number, height?: number, fillColor?: number, fillAlpha?: number): Phaser.GameObjects.Rectangle;
+  /**
+   * Creates a rectangle game object and adds it to the scene.
+   *
+   * @param {number} x - The x-coordinate of the rectangle.
+   * @param {number} y - The y-coordinate of the rectangle.
+   * @param {number} width - The width of the rectangle.
+   * @param {number} height - The height of the rectangle.
+   * @param {number} hexNumberForColor - The color of the rectangle in hexadecimal format (e.g., 0xff0000 for red).
+   * @returns {RectGameObject} The created rectangle game object.
+   */
   rectangle(x, y, width, height, hexNumberForColor) {
-    if (!this.scene.displayList) {
-      console.warn(
-        "Cannot create a rectangle before scene finishies initialising"
-      );
-      return;
-    }
-
     const color = "#" + hexNumberForColor.toString(16);
     const rect = new RectGameObject(x, y, width, height, color);
     this.scene.displayList.add(rect);
     return rect;
   }
 
+  /**
+   * Creates a text game object and adds it to the scene.
+   *
+   * @param {number} x - The x-coordinate of the text.
+   * @param {number} y - The y-coordinate of the text.
+   * @param {string} text - The text content to be displayed.
+   * @param {TextStyle} style - The style configuration for the text (e.g., font size, color, etc.).
+   * @returns {TextGameObject} The created text game object.
+   */
   text(x, y, text, style) {
-    if (!this.scene.displayList) {
-      console.warn("Cannot create text before scene finishies initialising");
-      return;
-    }
-
     const textGameObject = new TextGameObject(x, y, text, style);
     this.scene.displayList.add(textGameObject);
     return textGameObject;
@@ -79,125 +97,159 @@ class DisplayList {
     this.objects.push(gameObject);
   }
 
-  renderAll() {
+  /**
+   * Renders all objects in the display list.
+   * @param {CanvasRenderingContext2D} ctx - The rendering context.
+   */
+  renderAll(ctx) {
     for (const obj of this.objects) {
-      obj.render();
+      obj.draw(ctx);
     }
   }
 }
 
 export class Scene {
-  constructor(config) {
-    this.key = config.key;
+  /**@type{string} */
+  key;
+
+  /**@type{DisplayList} */
+  displayList;
+
+  /**@type{GameObjectFactory} */
+  add;
+
+  /**@type{Game} */
+  game;
+
+  constructor(sceneConfig) {
+    this.key = sceneConfig.key;
     this.displayList = new DisplayList();
     this.add = new GameObjectFactory(this);
   }
 
+  /**
+   * @param {Game} game
+   */
+  setGame(game) {
+    this.game = game;
+  }
+
   // Meant to be overwritten by user.
   // Runs once.
-  create() {
+  create() {}
+
+  destroy() {
+    this.displayList = new DisplayList();
   }
 
   // Meant to be overwritten by user.
   // Runs every frame.
-  update() {
-    // this.displayList.renderAll();
-  }
+  update() {}
 }
 
-export class Game {
-  constructor(config) {
-    this.currentScene = config.scenes[0];
+/**
+ * @typedef {Object} GameConfig
+ * @property {Scene[]} scenes - The scenes of the game.
+ * @property {number} width - The width of the canvas.
+ * @property {number} height - The height of the canvas.
+ * @property {number} [fpsLimit=30] - The max fps the game will render at.
+ * @property {string} [backgroundColor="#E1E9B7"] - The default background color to erase with every frame.
+ * @property {HTMLElement | null} [parent] - The DOM element to append the canvas to (default: document.body)
+ */
 
+export class Game {
+  /** @type{GameConfig} */
+  config;
+
+  /** @type{Scene | undefined} */
+  currentScene;
+
+  /** @type{Object<string, Scene>} */
+  scenes;
+
+  /** @type{HTMLCanvasElement} */
+  canvas;
+
+  /** @type{CanvasRenderingContext2D} */
+  ctx;
+
+  /** @type{number} */
+  lastRenderTime;
+
+  /** @type{number} */
+  fpmsLimit;
+
+  /**
+   * @param {GameConfig} config - The game configuration object
+   */
+  constructor(config) {
+    this.config = config;
+    this.currentScene = config.scenes[0];
     this.scenes = {};
+    this.lastRenderTime = 0;
+    this.fpmsLimit = 1000 / (config.fpsLimit || 30);
+
+    this.canvas = this.#createCanvas(config.width, config.height);
+    this.ctx = /** @type {CanvasRenderingContext2D} */ (
+      this.canvas.getContext("2d")
+    );
+
     for (const scene of config.scenes) {
+      scene.setGame(this);
       this.scenes[scene.key] = scene;
     }
+
+    this.startScene(config.scenes[0].key);
+
+    this.#raf();
   }
 
-  switchScene(name) {
-    this.currentScene = this.scenes[name];
-    this.currentScene.create();
+  /**
+   * Creates a canvas element and appends it to the DOM.
+   * @param {number} width - Canvas width
+   * @param {number} height - Canvas height
+   * @returns {HTMLCanvasElement} The created canvas element
+   */
+  #createCanvas(width, height) {
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    // Append to specified parent or document body
+    (this.config.parent || document.body).appendChild(canvas);
+
+    return canvas;
+  }
+
+  /**
+   * @param {number} timestamp
+   * @returns {void}
+   */
+  gameLoop(timestamp) {
+    const deltaTime = timestamp - this.lastRenderTime;
+
+    if (deltaTime < this.fpmsLimit) {
+      this.#raf();
+      return;
+    }
+    this.lastRenderTime = timestamp;
+
+    this.ctx.fillStyle = this.config.backgroundColor || "#E1E9B7";
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    this.currentScene?.update();
+    this.currentScene?.displayList.renderAll(this.ctx);
+
+    this.#raf();
+  }
+
+  #raf() {
+    requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
   }
 
   startScene(name) {
+    this.currentScene?.destroy();
     this.currentScene = this.scenes[name];
-    this.currentScene.create();
+    this.currentScene?.create();
   }
 }
-
-
-const scene1 = {
-  player: {
-    x: 0,
-    y: canvas.height / 2,
-    width: 50,
-    height: 50,
-    speed: 15,
-  },
-
-  update() {
-    this.player.x += this.player.speed;
-    if (this.player.x > canvas.width) {
-      this.player.x = -this.player.width;
-    }
-  },
-
-  render() {
-    ctx.fillStyle = "#F96161";
-    ctx.fillRect(
-      this.player.x,
-      this.player.y,
-      this.player.width,
-      this.player.height
-    );
-  },
-};
-
-const scene2 = {
-  text: "hello world",
-
-  update() {},
-
-  render() {
-    ctx.fillStyle = "black";
-    ctx.font = "30px Arial";
-
-    ctx.fillText(this.text, 20, 40);
-  },
-};
-
-const game = {
-  currentScene: scene1,
-};
-
-canvas.addEventListener("click", () => {
-  // @ts-ignore
-  game.currentScene = game.currentScene === scene1 ? scene2 : scene1;
-});
-
-let lastTime = 0;
-const fpsLimit = 1000 / 30;
-
-function gameLoop(timestamp) {
-  const deltaTime = timestamp - lastTime;
-
-  if (deltaTime < fpsLimit) {
-    return requestAnimationFrame(gameLoop);
-  }
-  lastTime = timestamp;
-
-  ctx.fillStyle = "#E1E9B7";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  game.currentScene.update();
-  game.currentScene.render();
-
-  requestAnimationFrame(gameLoop);
-}
-
-function main() {
-  requestAnimationFrame(gameLoop);
-}
-
-main();
