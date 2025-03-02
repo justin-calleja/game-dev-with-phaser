@@ -33,7 +33,7 @@ degit justin-calleja/template-vite#with-pnpm-no-log ./game-dev-with-phaser/01-ga
 Objectives:
 
 - Client code should not care about (or even see) the canvas API. Not just the canvas API, rendering should be abstracted.
-- Client should create game objects to render - the "framework" will render them. The "framework" should provide ways for these game objects to be created.
+- Client should create game objects - the "framework" will render them. The "framework" should provide ways for these game objects to be created.
 
 ```js
 import { Scene, Game } from "./dummy-phaser";
@@ -48,12 +48,12 @@ const game = new Game({
 ```
 
 - `GameObject`
-    - Anything that needs to be updated or drawn (or both) on every frame.
+    - Anything that needs to be updated or drawn on every frame.
 - `GameObjectFactory`
-    - Allows quick creation of many common types of Game Objects and have them automatically registered with the Scene.
+    - Quick way of creating Game Objects and adding them to a Scene.
 - `DisplayList`
     - Belongs to a Scene and maintains the list of GameObjects to render every frame.
 - `Scene`
-    - A base class which can be extended by user of engine. User defines `GameObject`s in `create` (which runs once) and update them in `update` (which runs every frame).
+    - A base class which can be extended by users of framework. User defines `GameObject`s in `create` (which runs once) and updates them in `update` (which runs every frame).
 - `Game`
     - The main controller for our game i.e. used to configure, bootstrap, start, and run our game.
