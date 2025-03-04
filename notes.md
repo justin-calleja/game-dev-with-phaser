@@ -28,7 +28,7 @@ Implement a basic game loop using requestAnimationFrame.
 degit justin-calleja/template-vite#with-pnpm-no-log ./game-dev-with-phaser/01-gameloop
 ```
 
-### 03-dummy-phaser
+### 03-04-dummy-phaser
 
 Objectives:
 
