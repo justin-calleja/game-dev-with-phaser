@@ -1,10 +1,26 @@
 export class RectGameObject {
+  /**
+   * @param {number} x - The x-coordinate of the rectangle.
+   * @param {number} y - The y-coordinate of the rectangle.
+   * @param {number} width - The width of the rectangle.
+   * @param {number} height - The height of the rectangle.
+   * @param {string} color - The color of the rectangle in hexadecimal format (e.g., 0xff0000 for red).
+   */
   constructor(x, y, width, height, color) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
     this.color = color;
+  }
+
+  /**
+   * Draws the rectangle on the provided canvas context.
+   * @param {CanvasRenderingContext2D} ctx - The rendering context.
+   */
+  draw(ctx) {
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.width, this.height);
   }
 }
 
@@ -28,6 +44,16 @@ export class TextGameObject {
     this.y = y;
     this.text = text;
     this.style = style;
+  }
+
+  /**
+   * Draws the rectangle on the provided canvas context.
+   * @param {CanvasRenderingContext2D} ctx - The rendering context.
+   */
+  draw(ctx) {
+    ctx.fillStyle = this.style.color;
+    ctx.font = this.style.font;
+    ctx.fillText(this.text, this.x, this.y);
   }
 }
 
@@ -54,6 +80,8 @@ class GameObjectFactory {
     const color = "#" + hexNumberForColor.toString(16);
     const rect = new RectGameObject(x, y, width, height, color);
 
+    this.scene.displayList.add(rect);
+
     return rect;
   }
 
@@ -68,6 +96,9 @@ class GameObjectFactory {
    */
   text(x, y, text, style) {
     const textGameObject = new TextGameObject(x, y, text, style);
+
+    this.scene.displayList.add(textGameObject);
+
     return textGameObject;
   }
 }
@@ -88,8 +119,15 @@ class DisplayList {
     this.gameObjects.push(gameObject);
   }
 
-  drawAll() {
-    // TODO: ...
+  /**
+   * Draws all objects in the display list.
+   *
+   * @param {CanvasRenderingContext2D} ctx - The rendering context.
+   */
+  drawAll(ctx) {
+    for (const obj of this.gameObjects) {
+      obj.draw(ctx);
+    }
   }
 }
 
@@ -136,6 +174,7 @@ export class Scene {
  * @property {Scene[]} scenes - The scenes of the game.
  * @property {number} width - The width of the canvas.
  * @property {number} height - The height of the canvas.
+ * @property {string} [backgroundColor="#E1E9B7"] - The default background color to erase with every frame.
  * @property {HTMLElement | null} [parent] - The DOM element to append the canvas to (default: document.body)
  */
 
@@ -155,11 +194,15 @@ export class Game {
   /** @type{CanvasRenderingContext2D} */
   ctx;
 
+  /** @type{string} */
+  backgroundColor;
+
   /**
    * @param {GameConfig} config - The game configuration object
    */
   constructor(config) {
     this.config = config;
+    this.backgroundColor = config.backgroundColor || "#E1E9B7";
     this.currentScene = config.scenes[0];
     this.scenes = {};
 
@@ -174,7 +217,11 @@ export class Game {
 
     this.startScene(this.currentScene.key);
 
-    requestAnimationFrame(this.#gameLoop);
+    this.#raf();
+  }
+
+  #raf() {
+    requestAnimationFrame((timestamp) => this.#gameLoop(timestamp));
   }
 
   startScene(key) {
@@ -202,9 +249,12 @@ export class Game {
    * @returns {void}
    */
   #gameLoop(timestamp) {
-    this.currentScene?.update();
-    this.currentScene?.displayList.drawAll();
+    this.ctx.fillStyle = this.backgroundColor;
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    requestAnimationFrame(this.#gameLoop);
+    this.currentScene?.update();
+    this.currentScene?.displayList.drawAll(this.ctx);
+
+    this.#raf();
   }
 }
