@@ -82,3 +82,7 @@ declare const DEBUG: string;
 ```
 
 ... this becomes a problem in production if `DEBUG` is not also added to vite's prod config.
+
+## That preload blocks the create
+
+How does it work exactly?
