@@ -146,6 +146,9 @@ export class Scene {
   /**@type{DisplayList} */
   displayList;
 
+  /**@type{Game} */
+  game;
+
   /**
    * @param {SceneConfig} sceneConfig
    */
@@ -156,17 +159,29 @@ export class Scene {
   }
 
   /**
+   * @param {Game} game
+   */
+  setGame(game) {
+    this.game = game;
+  }
+
+  /**
    * Meant to be overwritten by user.
    * Runs once.
    */
   create() {}
 
+  destroy() {
+    this.displayList = new DisplayList();
+  }
+
   /**
    * Meant to be overwritten by user.
    * Runs every frame.
-   *
+   * @param {number} timestamp running time (requestAnimationFrame time)
+   * @param {number} deltaTime time since last frame render
    */
-  update() {}
+  update(timestamp, deltaTime) {}
 }
 
 /**
@@ -175,6 +190,7 @@ export class Scene {
  * @property {number} width - The width of the canvas.
  * @property {number} height - The height of the canvas.
  * @property {string} [backgroundColor="#E1E9B7"] - The default background color to erase with every frame.
+ * @property {number} [fpsLimit=30] - The max fps the game will render at.
  * @property {HTMLElement | null} [parent] - The DOM element to append the canvas to (default: document.body)
  */
 
@@ -197,6 +213,12 @@ export class Game {
   /** @type{string} */
   backgroundColor;
 
+  /** @type{number} */
+  lastRenderTime;
+
+  /** @type{number} */
+  fpsLimitInMs;
+
   /**
    * @param {GameConfig} config - The game configuration object
    */
@@ -205,6 +227,8 @@ export class Game {
     this.backgroundColor = config.backgroundColor || "#E1E9B7";
     this.currentScene = config.scenes[0];
     this.scenes = {};
+    this.fpsLimitInMs = 1000 / (config.fpsLimit || 30);
+    this.lastRenderTime = 0;
 
     this.canvas = this.#createCanvas(config.width, config.height);
     this.ctx =
@@ -212,6 +236,7 @@ export class Game {
       (this.canvas.getContext("2d"));
 
     for (const scene of config.scenes) {
+      scene.setGame(this);
       this.scenes[scene.key] = scene;
     }
 
@@ -225,6 +250,7 @@ export class Game {
   }
 
   startScene(key) {
+    this.currentScene?.destroy();
     this.currentScene = this.scenes[key];
     this.currentScene?.create();
   }
@@ -249,10 +275,19 @@ export class Game {
    * @returns {void}
    */
   #gameLoop(timestamp) {
+    const deltaTime = timestamp - this.lastRenderTime;
+
+    if (deltaTime < this.fpsLimitInMs) {
+      this.#raf();
+      return;
+    }
+
+    this.lastRenderTime = timestamp;
+
     this.ctx.fillStyle = this.backgroundColor;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    this.currentScene?.update();
+    this.currentScene?.update(timestamp, deltaTime);
     this.currentScene?.displayList.drawAll(this.ctx);
 
     this.#raf();
