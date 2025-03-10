@@ -22,8 +22,12 @@ export class Game extends Scene {
   /** @type{Phaser.GameObjects.Group} */
   itemsGroup;
 
+  /** @type {Phaser.Physics.Arcade.Sprite[]} */
+  spritesToDepthSort;
+
   constructor() {
     super("game");
+    this.spritesToDepthSort = [];
   }
 
   init() {
@@ -42,7 +46,7 @@ export class Game extends Scene {
       .setOffset(12, 38)
       .setData("tag", "player")
       .play("down-idle");
-    console.log(this.player);
+    this.spritesToDepthSort.push(this.player);
 
     this.boxGroup = this.physics.add.staticGroup();
 
@@ -165,6 +169,8 @@ export class Game extends Scene {
     item.scale = 0;
     item.alpha = 0;
 
+    item.setDepth(2000);
+
     this.tweens.add({
       targets: item,
       y: "-=50",
@@ -201,12 +207,12 @@ export class Game extends Scene {
 
     this.updateActiveBox();
 
-    this.children.each((c) => {
+    this.spritesToDepthSort.forEach((s) => {
       /** @type {Phaser.Physics.Arcade.Sprite} */
       // @ts-ignore
-      const child = c;
+      const sprite = s;
 
-      child.setDepth(child.y);
+      sprite.setDepth(sprite.y);
     });
   }
 
@@ -223,6 +229,8 @@ export class Game extends Scene {
           .setSize(64, 32)
           .setOffset(0, 32)
           .setData("itemType", level[row][col]);
+
+        this.spritesToDepthSort.push(box);
 
         xPer += 0.25;
       }
