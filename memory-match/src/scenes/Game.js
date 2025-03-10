@@ -1,5 +1,11 @@
 import { Scene } from "phaser";
 
+const level = [
+  [1, 0, 3],
+  [2, 4, 1],
+  [3, 4, 2],
+];
+
 export class Game extends Scene {
   /** @type {Phaser.Types.Input.Keyboard.CursorKeys} */
   cursors;
@@ -9,6 +15,12 @@ export class Game extends Scene {
 
   /** @type{Phaser.Physics.Arcade.StaticGroup} */
   boxGroup;
+
+  /** @type{Phaser.Physics.Arcade.Sprite | undefined} */
+  activeBox;
+
+  /** @type{Phaser.GameObjects.Group} */
+  itemsGroup;
 
   constructor() {
     super("game");
@@ -28,6 +40,7 @@ export class Game extends Scene {
       .sprite(width * 0.5, height * 0.6, "sokoban")
       .setSize(40, 16)
       .setOffset(12, 38)
+      .setData("tag", "player")
       .play("down-idle");
     console.log(this.player);
 
@@ -35,10 +48,28 @@ export class Game extends Scene {
 
     this.createBoxes();
 
-    this.physics.add.collider(this.player, this.boxGroup);
+    this.itemsGroup = this.add.group();
+
+    this.physics.add.collider(
+      this.player,
+      this.boxGroup,
+      this.handlePlayerBoxCollide,
+      undefined,
+      this
+    );
   }
 
-  update() {
+  handlePlayerBoxCollide(player, box) {
+    if (this.activeBox) {
+      return;
+    }
+
+    this.activeBox = box;
+
+    this.activeBox?.setFrame(9);
+  }
+
+  updatePlayer() {
     const speed = 200;
     let velocityX = 0;
     let velocityY = 0;
@@ -79,6 +110,97 @@ export class Game extends Scene {
       this.player.play(`${direction}-idle`);
     }
 
+    const spaceJustPressed = Phaser.Input.Keyboard.JustUp(this.cursors.space);
+    if (spaceJustPressed) {
+      this.openBox(this.activeBox);
+    }
+  }
+
+  /**
+   *
+   * @param {Phaser.Physics.Arcade.Sprite | undefined} box
+   */
+  openBox(box) {
+    if (!box) {
+      return;
+    }
+
+    const itemType = box.getData("itemType");
+
+    /** @type{Phaser.GameObjects.Sprite | null} */
+    let item = null;
+
+    switch (itemType) {
+      case 0:
+        item = this.itemsGroup.get(box.x, box.y);
+        item?.setTexture("bear");
+        break;
+
+      case 1:
+        item = this.itemsGroup.get(box.x, box.y);
+        item?.setTexture("chicken");
+        break;
+
+      case 2:
+        item = this.itemsGroup.get(box.x, box.y);
+        item?.setTexture("duck");
+        break;
+
+      case 3:
+        item = this.itemsGroup.get(box.x, box.y);
+        item?.setTexture("parrot");
+        break;
+
+      case 4:
+        item = this.itemsGroup.get(box.x, box.y);
+        item?.setTexture("penguin");
+        break;
+    }
+
+    if (!item) {
+      console.error("No item to work with in openBox...");
+      return;
+    }
+
+    item.scale = 0;
+    item.alpha = 0;
+
+    this.tweens.add({
+      targets: item,
+      y: "-=50",
+      alpha: 1,
+      scale: 1,
+      duration: 500,
+    });
+
+    this.activeBox = undefined;
+  }
+
+  updateActiveBox() {
+    if (!this.activeBox) {
+      return;
+    }
+
+    const distance = Phaser.Math.Distance.Between(
+      this.player.x,
+      this.player.y,
+      this.activeBox.x,
+      this.activeBox.y
+    );
+
+    if (distance < 64) {
+      return;
+    }
+
+    this.activeBox.setFrame(10);
+    this.activeBox = undefined;
+  }
+
+  update() {
+    this.updatePlayer();
+
+    this.updateActiveBox();
+
     this.children.each((c) => {
       /** @type {Phaser.Physics.Arcade.Sprite} */
       // @ts-ignore
@@ -93,11 +215,14 @@ export class Game extends Scene {
 
     let xPer = 0.25;
     let y = 150;
-    for (let row = 0; row < 3; ++row) {
-      for (let col = 0; col < 3; ++col) {
+    for (let row = 0; row < level.length; ++row) {
+      for (let col = 0; col < level[row].length; ++col) {
         /** @type {Phaser.Physics.Arcade.Sprite} */
         const box = this.boxGroup.get(width * xPer, y, "sokoban", 10);
-        box.setSize(64, 32).setOffset(0, 32);
+        box
+          .setSize(64, 32)
+          .setOffset(0, 32)
+          .setData("itemType", level[row][col]);
 
         xPer += 0.25;
       }
