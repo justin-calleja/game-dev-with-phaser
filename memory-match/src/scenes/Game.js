@@ -6,6 +6,9 @@ const level = [
   [3, 4, 2],
 ];
 
+const opened = "opened";
+const closed = "closed";
+
 export class Game extends Scene {
   /** @type {Phaser.Types.Input.Keyboard.CursorKeys} */
   cursors;
@@ -25,9 +28,17 @@ export class Game extends Scene {
   /** @type {Phaser.Physics.Arcade.Sprite[]} */
   spritesToDepthSort;
 
+  /** @type {{ box: Phaser.Physics.Arcade.Sprite, item: Phaser.GameObjects.Sprite}[]} */
+  selectedBoxes;
+
+  /**@type{number} */
+  matchesCount;
+
   constructor() {
     super("game");
     this.spritesToDepthSort = [];
+    this.selectedBoxes = [];
+    this.matchesCount = 0;
   }
 
   init() {
@@ -64,7 +75,7 @@ export class Game extends Scene {
   }
 
   handlePlayerBoxCollide(player, box) {
-    if (this.activeBox) {
+    if (this.activeBox || box.getData("state") === opened) {
       return;
     }
 
@@ -74,6 +85,10 @@ export class Game extends Scene {
   }
 
   updatePlayer() {
+    if (!this.player.active) {
+      return;
+    }
+
     const speed = 200;
     let velocityX = 0;
     let velocityY = 0;
@@ -129,6 +144,8 @@ export class Game extends Scene {
       return;
     }
 
+    box.setData("state", opened);
+
     const itemType = box.getData("itemType");
 
     /** @type{Phaser.GameObjects.Sprite | null} */
@@ -166,10 +183,12 @@ export class Game extends Scene {
       return;
     }
 
+    item.setDepth(2000);
+
     item.scale = 0;
     item.alpha = 0;
 
-    item.setDepth(2000);
+    this.selectedBoxes.push({ box, item });
 
     this.tweens.add({
       targets: item,
@@ -177,9 +196,103 @@ export class Game extends Scene {
       alpha: 1,
       scale: 1,
       duration: 500,
+      onComplete: (_tween, _targets) => {
+        if (itemType === 0) {
+          this.handleBearSelected();
+          return;
+        }
+
+        if (this.selectedBoxes.length < 2) {
+          return;
+        }
+
+        this.checkForMatch();
+      },
     });
 
+    this.activeBox?.setFrame(10);
     this.activeBox = undefined;
+  }
+
+  handleBearSelected() {
+    const selectedBox = this.selectedBoxes.pop();
+    if (!selectedBox) {
+      throw new Error(
+        "cannot handle bear selected when there is nothing selected"
+      );
+    }
+
+    const { box, item } = selectedBox;
+
+    item.setTint(0xff0000);
+    box.setFrame(7);
+
+    this.player.active = false;
+    this.player.setVelocity(0, 0);
+
+    this.time.delayedCall(1000, () => {
+      item.setTint(0xffffff);
+      box.setFrame(10);
+      box.setData("state", closed);
+
+      this.tweens.add({
+        targets: item,
+        y: "+=50",
+        alpha: 0,
+        scale: 0,
+        duration: 300,
+        onComplete: (_tween, _targets) => {
+          this.player.active = true;
+        },
+      });
+    });
+  }
+
+  checkForMatch() {
+    const selected1 = this.selectedBoxes.pop();
+    const selected2 = this.selectedBoxes.pop();
+
+    if (selected1?.item.texture.key !== selected2?.item.texture.key) {
+      this.tweens.add({
+        targets: [selected1?.item, selected2?.item],
+        y: "+=50",
+        alpha: 0,
+        scale: 0,
+        duration: 300,
+        delay: 800,
+        onComplete: () => {
+          selected1?.box.setData("state", closed);
+          selected2?.box.setData("state", closed);
+
+          // NOTE: no need to set box frame to 10 as that would already
+          // be done by openBox
+        },
+      });
+
+      return;
+    }
+
+    // NOTE: past here is "match" case.
+
+    ++this.matchesCount;
+
+    this.time.delayedCall(800, () => {
+      selected1?.box.setFrame(8);
+      selected2?.box.setFrame(8);
+
+      if (this.matchesCount >= 4) {
+        this.player.active = false;
+        this.player.setVelocity(0, 0);
+
+        const { width, height } = this.scale;
+        this.add
+          .text(width * 0.5, height * 0.5, "You win!", {
+            fontSize: 48,
+          })
+          .setOrigin(0.5)
+          .setDepth(3000);
+      }
+    });
   }
 
   updateActiveBox() {
@@ -228,7 +341,8 @@ export class Game extends Scene {
         box
           .setSize(64, 32)
           .setOffset(0, 32)
-          .setData("itemType", level[row][col]);
+          .setData("itemType", level[row][col])
+          .setData("state", closed);
 
         this.spritesToDepthSort.push(box);
 
