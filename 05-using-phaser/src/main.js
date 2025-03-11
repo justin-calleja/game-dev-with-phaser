@@ -18,8 +18,8 @@ class BoxScene extends Scene {
       0xf96161
     );
 
-    this.input.once("pointerdown", () => {
-      this.scene.start("TextScene");
+    this.input.on("pointerdown", () => {
+      this.scene.switch("TextScene");
     });
   }
 
@@ -44,8 +44,8 @@ class TextScene extends Scene {
       font: "30px Arial",
     });
 
-    this.input.once("pointerdown", () => {
-      this.scene.start("BoxScene");
+    this.input.on("pointerdown", () => {
+      this.scene.switch("BoxScene");
     });
   }
 }
