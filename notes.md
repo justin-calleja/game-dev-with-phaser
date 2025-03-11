@@ -57,3 +57,7 @@ const game = new Game({
     - A base class which can be extended by users of framework. User defines `GameObject`s in `create` (which runs once) and updates them in `update` (which runs every frame).
 - `Game`
     - The main controller for our game i.e. used to configure, bootstrap, start, and run our game.
+
+### 05-using-phaser
+
+Re-implement what we built with "dummy-phaser" in Phaser.js.
