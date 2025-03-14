@@ -61,3 +61,11 @@ const game = new Game({
 ### 05-using-phaser
 
 Re-implement what we built with "dummy-phaser" in Phaser.js.
+
+## Exploring Phaser
+
+### 06-loading-assets
+
+- If a Scene has a `preload` method, it gets called before `create` and instructs Phaser to start the loader (plugin). See `SceneManager`'s `bootScene`.
+- Assets "loaded" in `preload` are not actually loaded yet as `this.load` is asynchronous. Instead, of immediately loaded, assets are queued to be loaded by the loader plugin. On completion, the loader plugin fires an event and the Scene's `create` method gets called.
+- Loaded assets are cached and available in all scenes.
