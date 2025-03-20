@@ -1,3 +1,4 @@
+import { Grid } from "../Grid";
 import { assetPackKey } from "../utils";
 import { Scene } from "./Scene";
 
@@ -14,32 +15,42 @@ export class Game extends Scene {
 		const fadeDuration = this.getFromRegistry("fadeDuration");
 		this.cameras.main.fadeIn(fadeDuration, 0, 0, 0);
 
-		// this.add.sprite(400 + box1.displayWidth + 4, 300, assetPackKey, 1).setScale(2);
-		const margin = 4;
+		const { width, height } = this.scale;
 
-		for (let i = 0; i < 3; i++) {
-			for (let j = 0; j < 3; j++) {
+		const grid = new Grid<Phaser.GameObjects.Sprite>({
+			margin: 12,
+			size: 3,
+			gameObjectCreator: () => {
 				const sprite = this.make
 					.sprite({ key: assetPackKey }, false)
-					.setScale(2);
+					.setScale(4);
 
-				sprite.setPosition(
-					396 + sprite.displayWidth * j + margin,
-					296 + sprite.displayHeight * i + margin,
-				);
+				return sprite;
+			},
+		});
 
-				this.add.existing(sprite);
-			}
+		grid.forEachEl((sprite, rowIndex, columnIndex) => {
+			// Calculate offsets
+			const totalWidth = grid.getDisplayWidth();
+			const totalHeight = grid.getDisplayHeight();
+			const cellX =
+				sprite.displayWidth * columnIndex + grid.margin * columnIndex;
+			const cellY = sprite.displayHeight * rowIndex + grid.margin * rowIndex;
 
-			// this.drawCross(396, 296);
-			this.drawCross(400, 300);
-		}
-		// this.msg_text = this.add.text(512, 384, 'Make something fun!\nand share it with us:\nsupport@phaser.io', {
-		//     fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-		//     stroke: '#000000', strokeThickness: 8,
-		//     align: 'center'
-		// });
-		// this.msg_text.setOrigin(0.5);
+			// Position relative to the grid center
+			sprite.setPosition(
+				cellX - totalWidth / 2 + sprite.displayWidth / 2,
+				cellY - totalHeight / 2 + sprite.displayHeight / 2,
+			);
+		});
+
+		const centerX = width / 2;
+		const centerY = height / 2;
+
+		const container = this.add.container(centerX, centerY, grid.getEls());
+		// window.container = container
+
+		this.drawCross(container.x, container.y);
 	}
 
 	drawCross(x: number, y: number, lineLength = 10, lineWidth = 1) {
