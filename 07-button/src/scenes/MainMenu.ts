@@ -15,18 +15,11 @@ export class MainMenu extends Scene
     {
         this.background = this.add.image(512, 384, 'background');
 
-        this.logo = this.add.image(512, 300, 'logo');
+        const width = this.scale.width / 2;
+        const height = this.scale.height / 2;
 
-        this.title = this.add.text(512, 460, 'Main Menu', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5);
-
-        this.input.once('pointerdown', () => {
-
-            this.scene.start('Game');
-
-        });
+        const flat = this.add.image(width, height, 'flat');
+        const gloss = this.add.image(width, height + flat.height, 'gloss');
+        const gradient = this.add.image(width, height + flat.height * 2, 'gradient');
     }
 }
