@@ -75,3 +75,10 @@ Re-implement what we built with "dummy-phaser" in Phaser.js.
   - https://www.kenney.nl/assets/ui-pack
 - Copy over some images
 - Render images separately
+
+### 08-interactive-button
+
+- how to make a game object interactive
+- how to change an Image game object's texture
+- how to listen and react to events on an interactive game object
+- how to set and get a game object's visibility

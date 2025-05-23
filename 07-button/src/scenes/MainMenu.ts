@@ -1,4 +1,6 @@
 import { Scene, GameObjects } from "phaser";
+import { Button } from "../Button";
+import { Checkbox } from "../Checkbox";
 
 export class MainMenu extends Scene {
   background: GameObjects.Image;
@@ -15,13 +17,9 @@ export class MainMenu extends Scene {
     const width = this.scale.width / 2;
     const height = this.scale.height / 2;
 
-    const flat = this.add.image(width, height, "flat");
-    const gloss = this.add.image(width, height + flat.height, "gloss");
-    gloss.setName("glossButton");
-    const gradient = this.add.image(
-      width,
-      height + flat.height * 2,
-      "gradient"
-    );
+    new Button(this, width, height);
+
+    const checkbox = new Checkbox(this, width - 200, height);
+    window.checkbox = checkbox;
   }
 }
