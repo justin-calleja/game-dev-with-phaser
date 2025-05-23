@@ -1,0 +1,25 @@
+{
+  "workbench.preferredHighContrastColorTheme": "Night Owl",
+  "editor.tabSize": 4,
+  "editor.insertSpaces": false,
+  "prettier.useTabs": true,
+  "prettier.tabWidth": 4,
+  "prettier.singleQuote": false,
+  "prettier.trailingComma": "all",
+  "prettier.semi": true,
+  "prettier.arrowParens": "always",
+  "prettier.printWidth": 100,
+  "prettier.bracketSpacing": true,
+  "prettier.jsxSingleQuote": false,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "tmp-02-*": true,
+    "gameloop": true,
+    "02-gameloop": true
+  }
+}

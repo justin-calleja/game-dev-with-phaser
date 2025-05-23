@@ -6,7 +6,7 @@ class BoxScene extends Scene {
   /** @type {RectGameObject} */
   player;
 
-  playerSpeed = 15;
+  playerSpeed = 10;
 
   constructor() {
     super({ key: "BoxScene" });
@@ -22,7 +22,8 @@ class BoxScene extends Scene {
     );
   }
 
-  update() {
+  update(_time, deltaTime) {
+    // this.player.x += this.playerSpeed * deltaTime;
     this.player.x += this.playerSpeed;
     if (this.player.x > this.game.config.width) {
       this.player.x = -this.player.width;
@@ -54,5 +55,7 @@ const game = new Game({
 });
 
 game.canvas.addEventListener("click", () => {
-  game.startScene(game.currentScene?.key === "BoxScene" ? "TextScene" : "BoxScene")
-})
+  game.startScene(
+    game.currentScene?.key === "BoxScene" ? "TextScene" : "BoxScene"
+  );
+});

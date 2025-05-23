@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import CountdownController from "./CountdownController";
 
 const level = [
   [1, 0, 3],
@@ -31,6 +32,9 @@ export class Game extends Scene {
   /** @type {{ box: Phaser.Physics.Arcade.Sprite, item: Phaser.GameObjects.Sprite}[]} */
   selectedBoxes;
 
+  /** @type {CountdownController} */
+  countdown;
+
   /**@type{number} */
   matchesCount;
 
@@ -56,7 +60,8 @@ export class Game extends Scene {
       .setSize(40, 16)
       .setOffset(12, 38)
       .setData("tag", "player")
-      .play("down-idle");
+      .play("down-idle")
+      .setCollideWorldBounds(true);
     this.spritesToDepthSort.push(this.player);
 
     this.boxGroup = this.physics.add.staticGroup();
@@ -65,6 +70,13 @@ export class Game extends Scene {
 
     this.itemsGroup = this.add.group();
 
+    const timerLabel = this.add
+      .text(width * 0.5, 50, "45", { fontSize: 48 })
+      .setOrigin(0.5);
+
+    this.countdown = new CountdownController(this, timerLabel);
+    this.countdown.start(this.handleCountdownFinished.bind(this), 5000);
+
     this.physics.add.collider(
       this.player,
       this.boxGroup,
@@ -72,6 +84,17 @@ export class Game extends Scene {
       undefined,
       this
     );
+  }
+
+  handleCountdownFinished() {
+    this.player.active = false;
+    this.player.setVelocity(0);
+
+    const { width, height } = this.scale;
+    this.add
+      .text(width * 0.5, height * 0.5, "You Lose!", { fontSize: 48 })
+      .setDepth(3000)
+      .setOrigin(0.5);
   }
 
   handlePlayerBoxCollide(player, box) {
@@ -327,6 +350,8 @@ export class Game extends Scene {
 
       sprite.setDepth(sprite.y);
     });
+
+    this.countdown.update();
   }
 
   createBoxes() {

@@ -1,4 +1,11 @@
 export class RectGameObject {
+  /**
+   * @param {number} x - The x-coordinate of the rectangle.
+   * @param {number} y - The y-coordinate of the rectangle.
+   * @param {number} width - The width of the rectangle.
+   * @param {number} height - The height of the rectangle.
+   * @param {string} color - The color of the rectangle in hexadecimal format (e.g., 0xff0000 for red).
+   */
   constructor(x, y, width, height, color) {
     this.x = x;
     this.y = y;
@@ -88,25 +95,38 @@ class GameObjectFactory {
   }
 }
 
+/**
+ * @typedef {RectGameObject | TextGameObject} GameObject
+ */
+
 class DisplayList {
+  /**@type{GameObject[]} */
+  gameObjects;
+
   constructor() {
-    this.objects = [];
+    this.gameObjects = [];
   }
 
   add(gameObject) {
-    this.objects.push(gameObject);
+    this.gameObjects.push(gameObject);
   }
 
   /**
-   * Renders all objects in the display list.
+   * Draws all objects in the display list.
+   *
    * @param {CanvasRenderingContext2D} ctx - The rendering context.
    */
-  renderAll(ctx) {
-    for (const obj of this.objects) {
+  drawAll(ctx) {
+    for (const obj of this.gameObjects) {
       obj.draw(ctx);
     }
   }
 }
+
+/**
+ * @typedef {Object} SceneConfig
+ * @property {string} key - A unique identifier for a given scene
+ */
 
 export class Scene {
   /**@type{string} */
@@ -121,6 +141,9 @@ export class Scene {
   /**@type{Game} */
   game;
 
+  /**
+   * @param {SceneConfig} sceneConfig
+   */
   constructor(sceneConfig) {
     this.key = sceneConfig.key;
     this.displayList = new DisplayList();
@@ -134,17 +157,24 @@ export class Scene {
     this.game = game;
   }
 
-  // Meant to be overwritten by user.
-  // Runs once.
+  /**
+   * Meant to be overwritten by user.
+   * Runs once.
+   */
   create() {}
 
   destroy() {
     this.displayList = new DisplayList();
   }
 
-  // Meant to be overwritten by user.
-  // Runs every frame.
-  update() {}
+  /**
+   * Meant to be overwritten by user.
+   * Runs every frame.
+   *
+   * @param {number} timestamp running time (requestAnimationFrame time)
+   * @param {number} deltaTime time since last frame render
+   */
+  update(timestamp, deltaTime) {}
 }
 
 /**
@@ -176,6 +206,9 @@ export class Game {
   /** @type{number} */
   lastRenderTime;
 
+  /** @type{string} */
+  backgroundColor;
+
   /** @type{number} */
   fpmsLimit;
 
@@ -187,6 +220,7 @@ export class Game {
     this.currentScene = config.scenes[0];
     this.scenes = {};
     this.lastRenderTime = 0;
+    this.backgroundColor = config.backgroundColor || "#E1E9B7";
     this.fpmsLimit = 1000 / (config.fpsLimit || 30);
 
     this.canvas = this.#createCanvas(config.width, config.height);
@@ -199,7 +233,7 @@ export class Game {
       this.scenes[scene.key] = scene;
     }
 
-    this.startScene(config.scenes[0].key);
+    this.startScene(this.currentScene.key);
 
     this.#raf();
   }
@@ -225,7 +259,7 @@ export class Game {
    * @param {number} timestamp
    * @returns {void}
    */
-  gameLoop(timestamp) {
+  #gameLoop(timestamp) {
     const deltaTime = timestamp - this.lastRenderTime;
 
     if (deltaTime < this.fpmsLimit) {
@@ -234,17 +268,19 @@ export class Game {
     }
     this.lastRenderTime = timestamp;
 
-    this.ctx.fillStyle = this.config.backgroundColor || "#E1E9B7";
+    this.ctx.fillStyle = this.backgroundColor;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    this.currentScene?.update();
-    this.currentScene?.displayList.renderAll(this.ctx);
+    this.currentScene?.update(timestamp, deltaTime);
+    this.currentScene?.displayList.drawAll(this.ctx);
+    //
+    // requestAnimationFrame(...);
 
     this.#raf();
   }
 
   #raf() {
-    requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
+    requestAnimationFrame((timestamp) => this.#gameLoop(timestamp));
   }
 
   startScene(name) {
