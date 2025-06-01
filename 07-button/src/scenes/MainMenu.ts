@@ -1,5 +1,6 @@
 import { Scene, GameObjects } from "phaser";
 import { Button } from "../Button";
+import { Checkbox2 } from "../Checkbox2";
 import { Checkbox } from "../Checkbox";
 
 export class MainMenu extends Scene {
@@ -17,9 +18,10 @@ export class MainMenu extends Scene {
     const width = this.scale.width / 2;
     const height = this.scale.height / 2;
 
-    new Button(this, width, height);
+    const button = new Button(this, width, height);
 
     const checkbox = new Checkbox(this, width - 200, height);
-    window.checkbox = checkbox;
+    const checkbox2 = new Checkbox2(this, width - 280, height);
+    window.checkbox2 = checkbox2;
   }
 }
