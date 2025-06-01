@@ -1,5 +1,6 @@
 import { Scene, GameObjects } from "phaser";
 import { Button } from "../Button";
+import { Checkbox2 } from "../Checkbox2";
 import { Checkbox } from "../Checkbox";
 
 export class MainMenu extends Scene {
@@ -17,14 +18,17 @@ export class MainMenu extends Scene {
     const width = this.scale.width / 2;
     const height = this.scale.height / 2;
 
-    const btn = new Button(this, width, height);
-    // this.add.existing(btn);
-    window.btn = btn;
+    const button = new Button(this, width, height);
+    window.button = button;
 
-    btn.on("click", () => {
-      console.log(">> btn clicked from Btn itself");
-    })
+    this.add.existing(button);
+
+    button.on("click-even", () => {
+      console.log("... click even in MainMenu");
+    });
 
     const checkbox = new Checkbox(this, width - 200, height);
+    const checkbox2 = new Checkbox2(this, width - 280, height);
+    window.checkbox2 = checkbox2;
   }
 }
