@@ -1,4 +1,4 @@
-import { Scene, GameObjects } from "phaser";
+import { Scene, GameObjects, Input } from "phaser";
 import { Button } from "../Button";
 import { Checkbox2 } from "../Checkbox2";
 import { Checkbox } from "../Checkbox";
@@ -28,6 +28,12 @@ export class MainMenu extends Scene {
     });
 
     const checkbox = new Checkbox(this, width - 200, height);
+    checkbox.on("is-sound-enabled", (isSoundEnabled, extraArg) => {
+      console.log(
+        `isSoundEnabled is ${isSoundEnabled}`
+      );
+    });
+
     const checkbox2 = new Checkbox2(this, width - 280, height);
     window.checkbox2 = checkbox2;
   }
