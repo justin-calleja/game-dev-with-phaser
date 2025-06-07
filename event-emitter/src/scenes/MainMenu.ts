@@ -15,7 +15,7 @@ export class MainMenu extends Scene {
   }
 
   create() {
-    console.log("MainMenu - create()")
+    console.log("MainMenu - create()");
 
     this.background = this.add.image(512, 384, "background");
 
@@ -31,10 +31,10 @@ export class MainMenu extends Scene {
       this.scene.start("Game");
     });
 
-    this.events.on(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this)
+    this.events.on(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
 
     this.checkbox = new Checkbox(this, width - 200, height);
-    window.checkbox = this.checkbox
+    window.checkbox = this.checkbox;
     this.checkbox.on("is-sound-enabled", (isSoundEnabled) => {
       console.log(`isSoundEnabled is ${isSoundEnabled}`);
     });

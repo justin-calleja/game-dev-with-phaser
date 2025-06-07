@@ -1,7 +1,14 @@
-import { Events, Input, type GameObjects, type Scene } from "phaser";
+import { Input, type GameObjects, type Scene } from "phaser";
 import { checkboxEmpty, checkboxTicked } from "./assetKeys";
+import { EventEmitter } from "./event-emitters";
 
-export class Checkbox extends Events.EventEmitter {
+export type SupportedEvents = {
+  "is-sound-enabled": [boolean];
+  hello: [];
+  world: [{ val1: number; val2: string }];
+};
+
+export class Checkbox extends EventEmitter<SupportedEvents> {
   img: GameObjects.Image;
 
   constructor(public scene: Scene, public x: number, public y: number) {

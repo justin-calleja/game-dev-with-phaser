@@ -1,7 +1,12 @@
-import { GameObjects, Input, type Scene } from "phaser";
+import { Input, type Scene } from "phaser";
 import { defaultBtn, hoverBtn, pressedBtn } from "./assetKeys";
+import { ImageGameObject } from "./event-emitters";
 
-export class Button extends GameObjects.Image {
+export type SupportedEvents = {
+  "click-even": [];
+};
+
+export class Button extends ImageGameObject<SupportedEvents> {
   count = 0;
 
   constructor(public scene: Scene, public x: number, public y: number) {
@@ -9,10 +14,10 @@ export class Button extends GameObjects.Image {
 
     this.setInteractive();
 
-    this.on(Input.Events.GAMEOBJECT_POINTER_OVER, this.onPointerOver, this);
-    this.on(Input.Events.GAMEOBJECT_POINTER_OUT, this.onPointerOut, this);
-    this.on(Input.Events.GAMEOBJECT_POINTER_DOWN, this.onPointerDown, this);
-    this.on(Input.Events.GAMEOBJECT_POINTER_UP, this.onPointerUp, this);
+    this.on(Input.Events.GAMEOBJECT_POINTER_OVER as any, this.onPointerOver, this);
+    this.on(Input.Events.GAMEOBJECT_POINTER_OUT as any, this.onPointerOut, this);
+    this.on(Input.Events.GAMEOBJECT_POINTER_DOWN as any, this.onPointerDown, this);
+    this.on(Input.Events.GAMEOBJECT_POINTER_UP as any, this.onPointerUp, this);
   }
 
   protected onPointerOver() {
