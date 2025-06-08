@@ -20,12 +20,13 @@ export class MainMenu extends Scene {
     const height = this.scale.height / 2;
 
     this.button = new Button(this, width, height);
+    this.add.existing(this.button);
+    this.button.setText("Start")
     window.button = this.button;
 
-    this.add.existing(this.button);
 
     this.button.on("pointerdown", () => {
-      this.scene.start("Game");
+      // this.scene.start("Game");
     });
 
     this.events.on(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
