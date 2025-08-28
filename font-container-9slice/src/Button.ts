@@ -36,13 +36,15 @@ export class Button extends ImageGameObject<SupportedEvents> {
 
   public setText(text: string) {
     this.textGO = this.scene.add.text(this.x, this.y, text, {
-      fontFamily: "Arial Black",
+      fontFamily: "kenney-future",
       fontSize: 24,
       color: "#ffffff",
       stroke: "#000000",
       strokeThickness: 8,
       align: "center",
     });
+    this.textGO.setOrigin(0.5, 0.6);
+    window.textGO = this.textGO;
   }
 
   protected onPointerOver() {

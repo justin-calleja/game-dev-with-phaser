@@ -33,7 +33,12 @@ export class Preloader extends Scene {
     this.load.image(hoverBtn, "button_rectangle_depth_gloss.png");
     this.load.image(defaultBtn, "button_rectangle_depth_gradient.png");
 
-    this.load.font("kenney-future", "Kenney Future.ttf", "truetype");
+    this.load.font("kenney-future", "Kenney-Future.ttf", "truetype");
+    this.load.font(
+      "kenney-future-narrow",
+      encodeURIComponent("Kenney Future Narrow.ttf"),
+      "truetype"
+    );
   }
 
   create() {

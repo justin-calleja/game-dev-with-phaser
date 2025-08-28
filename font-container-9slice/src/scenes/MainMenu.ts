@@ -21,12 +21,20 @@ export class MainMenu extends Scene {
 
     this.button = new Button(this, width, height);
     this.add.existing(this.button);
-    this.button.setText("Start")
+    this.button.setText("Start");
     window.button = this.button;
 
+    this.button.on("pointerdown", () => {
+      this.button.setPosition(500, 400);
+    });
 
     this.button.on("pointerdown", () => {
       // this.scene.start("Game");
+      this.button.textGO.setFontFamily(
+        this.button.textGO.style.fontFamily === "kenney-future"
+          ? "kenney-future-narrow"
+          : "kenney-future"
+      );
     });
 
     this.events.on(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
