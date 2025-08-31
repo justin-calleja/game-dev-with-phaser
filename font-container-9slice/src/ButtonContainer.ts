@@ -1,22 +1,22 @@
 import { GameObjects, Input, type Scene } from "phaser";
 import { defaultBtn, hoverBtn, pressedBtn } from "./assetKeys";
-import { ImageGameObject } from "./event-emitters";
 
 export type SupportedEvents = {
   "click-even": [];
   pointerdown: [];
 };
 
-export class Button extends ImageGameObject<SupportedEvents> {
-  count = 0;
+export class ButtonContainer extends Phaser.GameObjects.Container {
+  imageGO: GameObjects.Image;
   textGO: GameObjects.Text;
 
   constructor(public scene: Scene, public x: number, public y: number) {
-    super(scene, x, y, defaultBtn);
+    super(scene, x, y);
 
-    scene.add.existing(this);
+    this.imageGO = new GameObjects.Image(scene, 0, 0, defaultBtn);
+    window.imageGO = this.imageGO;
 
-    this.textGO = this.scene.add.text(this.x, this.y, "", {
+    this.textGO = new GameObjects.Text(scene, 0, 0, "", {
       fontFamily: "kenney-future",
       fontSize: 24,
       color: "#ffffff",
@@ -25,7 +25,11 @@ export class Button extends ImageGameObject<SupportedEvents> {
       align: "center",
     });
     this.textGO.setOrigin(0.5, 0.6);
+    window.textGO = this.textGO;
 
+    this.add([this.imageGO, this.textGO]);
+    
+    this.setSize(this.imageGO.width, this.imageGO.height);
     this.setInteractive();
 
     this.on(
@@ -51,23 +55,18 @@ export class Button extends ImageGameObject<SupportedEvents> {
   }
 
   protected onPointerOver() {
-    this.setTexture(hoverBtn);
+    this.imageGO.setTexture(hoverBtn);
   }
 
   protected onPointerOut() {
-    this.setTexture(defaultBtn);
+    this.imageGO.setTexture(defaultBtn);
   }
 
   protected onPointerDown() {
-    this.count++;
-    if (this.count % 2 === 0) {
-      this.emit("click-even");
-    }
-
-    this.setTexture(pressedBtn);
+    this.imageGO.setTexture(pressedBtn);
   }
 
   protected onPointerUp() {
-    this.setTexture(hoverBtn);
+    this.imageGO.setTexture(hoverBtn);
   }
 }
