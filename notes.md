@@ -57,3 +57,9 @@ const game = new Game({
     - A base class which can be extended by user of engine. User defines `GameObject`s in `create` (which runs once) and update them in `update` (which runs every frame).
 - `Game`
     - The main controller for our game i.e. used to configure, bootstrap, start, and run our game.
+
+
+## to cover
+
+- In both Button and Checkbox, they both don't extend anything.
+- GameObjects extend EventEmitter i.e. they are event emitters

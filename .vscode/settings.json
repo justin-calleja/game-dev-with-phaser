@@ -8,7 +8,7 @@
   "prettier.trailingComma": "all",
   "prettier.semi": true,
   "prettier.arrowParens": "always",
-  "prettier.printWidth": 100,
+  "prettier.printWidth": 80,
   "prettier.bracketSpacing": true,
   "prettier.jsxSingleQuote": false,
   "files.exclude": {
