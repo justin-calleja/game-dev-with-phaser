@@ -7,14 +7,28 @@ export type SupportedEvents = {
 };
 
 export class ButtonContainer extends Phaser.GameObjects.Container {
-  imageGO: GameObjects.Image;
+  imageGO: GameObjects.NineSlice;
   textGO: GameObjects.Text;
+
+  yOffset = 2;
+  initialY: number;
 
   constructor(public scene: Scene, public x: number, public y: number) {
     super(scene, x, y);
 
-    this.imageGO = new GameObjects.Image(scene, 0, 0, defaultBtn);
-    window.imageGO = this.imageGO;
+    this.initialY = y;
+
+    this.imageGO = scene.make.nineslice({
+      x: 0,
+      y: 0,
+      key: defaultBtn,
+      leftWidth: 10,
+      rightWidth: 10,
+      topHeight: 10,
+      bottomHeight: 10,
+      width: 500,
+      height: 300,
+    })
 
     this.textGO = new GameObjects.Text(scene, 0, 0, "", {
       fontFamily: "kenney-future",
@@ -25,7 +39,6 @@ export class ButtonContainer extends Phaser.GameObjects.Container {
       align: "center",
     });
     this.textGO.setOrigin(0.5, 0.6);
-    window.textGO = this.textGO;
 
     this.add([this.imageGO, this.textGO]);
     
@@ -52,21 +65,26 @@ export class ButtonContainer extends Phaser.GameObjects.Container {
 
   public setText(text: string) {
     this.textGO.text = text;
+    this.imageGO.width = this.textGO.width + 40;
+    this.imageGO.height = this.textGO.height + 40;
   }
 
   protected onPointerOver() {
-    this.imageGO.setTexture(hoverBtn);
+    this.y += this.yOffset;
   }
 
   protected onPointerOut() {
     this.imageGO.setTexture(defaultBtn);
+    this.y = this.initialY;
   }
 
   protected onPointerDown() {
     this.imageGO.setTexture(pressedBtn);
+    this.y += this.yOffset;
   }
 
   protected onPointerUp() {
-    this.imageGO.setTexture(hoverBtn);
+    this.imageGO.setTexture(defaultBtn);
+    this.y -= this.yOffset;
   }
 }
