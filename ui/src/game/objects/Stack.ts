@@ -6,8 +6,11 @@ export type SupportedEvents = {
 };
 
 export class Stack extends GroupGameObject<SupportedEvents> {
+  private bounds: Phaser.Geom.Rectangle;
+
   constructor(public scene: Scene, children?: GameObjects.Image[]) {
     super(scene, children);
+    this.bounds = new Phaser.Geom.Rectangle(0, 0, 0, 0);
     this.align();
   }
 
@@ -16,41 +19,47 @@ export class Stack extends GroupGameObject<SupportedEvents> {
     this.align();
   }
 
+  getBoundsRect(): Phaser.Geom.Rectangle {
+    return this.bounds;
+  }
+
+  private updateBounds() {
+    const children = this.getChildren();
+    if (children.length === 0) {
+      this.bounds.setTo(0, 0, 0, 0);
+      return;
+    }
+
+    // Start with the first child's bounds
+    const firstChildBounds = children[0].getBounds();
+    this.bounds.setTo(firstChildBounds.x, firstChildBounds.y, firstChildBounds.width, firstChildBounds.height);
+    
+    // Merge each subsequent child's bounds into the main bounds
+    for (let i = 1; i < children.length; i++) {
+      const childBounds = children[i].getBounds();
+      Phaser.Geom.Rectangle.Union(this.bounds, childBounds, this.bounds);
+    }
+  }
+
   align() {
     Phaser.Actions.AlignTo(
       this.getChildren(),
-      Phaser.Display.Align.BOTTOM_RIGHT,
+      Phaser.Display.Align.BOTTOM_CENTER,
       0,
       14
     );
 
+    // Recalculate bounds after alignment
+    this.updateBounds();
+
     console.log('done aligning');
 
     this.emit("aligned");
-
-    // console.log("children's bounds:", this.getBounds().);
   }
 
   getBounds(rect: Phaser.Geom.Rectangle) {
-    // let bounds = new Phaser.Geom.Rectangle(0, 0, 0, 0);
-
-    const children = this.getChildren();
-    if (children.length === 0) {
-      return rect;
-    }
-
-    // bounds.x = children[0].x;
-    // bounds.y = children[0].y;
-    // Start with the first child's bounds
-    // let bounds = children[0].getBounds();
-    
-    // Merge each subsequent child's bounds into the main bounds
-    for (let i = 0; i < children.length; i++) {
-      const childBounds = children[i].getBounds();
-      console.log("childBounds:", childBounds);
-      Phaser.Geom.Rectangle.Union(rect, childBounds, rect);
-    }
-
+    // Copy the internal bounds to the provided rectangle
+    rect.setTo(this.bounds.x, this.bounds.y, this.bounds.width, this.bounds.height);
     return rect;
   }
 }
