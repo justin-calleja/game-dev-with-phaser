@@ -2,6 +2,8 @@ import { Scene, GameObjects } from "phaser";
 // import { mainMenu } from "../../asset-keys";
 import { Stack } from "../objects/Stack";
 import {
+  panelGreyWithRedBorder,
+  panelRed,
   primaryButton as primaryButtonAssetKey,
   secondaryButton as secondaryButtonAssetKey,
 } from "../../asset-keys";
@@ -9,10 +11,8 @@ import { ButtonContainer } from "../objects/ButtonContainer";
 
 export class MainMenu extends Scene {
   background: GameObjects.Image;
-  //   outerPanel: GameObjects.Image;
-  //   innerPanel: GameObjects.Image;
-  //   primaryButton: GameObjects.Image;
-  //   secondaryButton: GameObjects.Image;
+  outerPanel: GameObjects.Image;
+  innerPanel: GameObjects.NineSlice;
 
   constructor() {
     super("MainMenu");
@@ -27,34 +27,23 @@ export class MainMenu extends Scene {
     const startGameBtn = new ButtonContainer(this, 0, 0, primaryButtonAssetKey);
     startGameBtn.setText("Start game", {
       color: "#ffffff",
-      fontStyle: "bold",
-      //   stroke: "#ffffff",
-      //   strokeThickness: 1,
     });
 
     const optionsBtn = new ButtonContainer(this, 0, 0, secondaryButtonAssetKey);
     // secondaryButton.setText("Options", { fontFamily: "Bebas Neue" });
-    optionsBtn.setText("Options", { fontStyle: "bold" });
+    optionsBtn.setText("Options");
 
     const creditsBtn = new ButtonContainer(this, 0, 0, secondaryButtonAssetKey);
-    // creditsBtn.setText("Credits\n give credit where\ncredit is due", { fontStyle: "bold" });
-    creditsBtn.setText("Credits", { fontStyle: "bold" });
+    creditsBtn.setText("Credits");
 
-    const stack = new Stack(this, [
-      startGameBtn,
-      optionsBtn,
-      creditsBtn,
-      // this.make.image({ key: mainMenu.primaryButton }),
-      // this.make.image({ key: mainMenu.secondaryButton }),
-      // this.make.image({ key: mainMenu.secondaryButton }),
-    ]);
+    const stack = new Stack(this, [startGameBtn, optionsBtn, creditsBtn]);
 
     console.log("outside initialY:", optionsBtn.initialY);
 
     stack.on("aligned", () => {
       startGameBtn.initialY = startGameBtn.y;
       optionsBtn.initialY = optionsBtn.y;
-    //   creditsBtn.y += 24;
+      //   creditsBtn.y += 24;
       creditsBtn.initialY = creditsBtn.y;
 
       console.log("initialY:", optionsBtn.initialY);
@@ -69,20 +58,74 @@ export class MainMenu extends Scene {
       centerX,
       centerY - centerY / 2
     );
-    container.add(stack.getChildren());
-    this.add.existing(container);
 
-    // this.outerPanel = this.add.image(512, 384, assetKeys.mainmenu.outerPanel);
-    // this.innerPanel = this.add.image(512, 384, assetKeys.mainmenu.outerPanel);
-    // this.primaryButton = this.add.image(
-    //   512,
-    //   384,
-    //   assetKeys.mainmenu.primaryButton
+    // Add panels first
+
+    // this.outerPanel = this.make.image({ key: panelRed }, false);
+    this.innerPanel = this.make.nineslice(
+      {
+        x: 0,
+        y: 0,
+        key: panelGreyWithRedBorder,
+        leftWidth: 10,
+        rightWidth: 10,
+        topHeight: 10,
+        bottomHeight: 10,
+        // width: bounds.width + 20,
+        // height: bounds.height + 30,
+      },
+      false
+    );
+    // stack.align();
+
+    // const rect = new Phaser.Geom.Rectangle(0, 0, 0, 0);
+    // const rect = new Phaser.Geom.Rectangle(0, 0, 0, 0);
+    container.add(this.innerPanel);
+    container.add(stack.getChildren());
+
+    const bounds = stack.getBounds(this.innerPanel.getBounds());
+    // this.graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+    const graphicsRect = this.make.graphics({
+      x: 0,
+      y: 0,
+      fillStyle: { color: 0x000000, alpha: 0.7 },
+    });
+    // rect.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+    graphicsRect.fillRectShape(bounds);
+    // bounds.
+    this.innerPanel.setPosition(0, 0);
+    stack.align();
+    // this.innerPanel.setOrigin(0);
+    this.innerPanel.setSize(bounds.width + 80, bounds.height);
+    // this.innerPanel.height = bounds.height + 800;
+    // this.innerPanel.setPosition(10, 20);
+    // console.log(
+    //   "innerPanel size:",
+    //   this.innerPanel.width,
+    //   this.innerPanel.height
     // );
-    // this.secondaryButton = this.add.image(
-    //   512,
-    //   384,
-    //   assetKeys.mainmenu.secondaryButton
-    // );
+
+    // container.add(graphicsRect)
+    this.add.existing(graphicsRect);
+
+    console.log("bounds:", bounds);
+    // container.add(stack.getChildren());
+
+    // Set innerPanel size and position to cover all stack children
+    // this.innerPanel.setPosition(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+
+    /*
+    this.add.existing(stack.getChildren()[0]);
+    this.add.existing(stack.getChildren()[1]);
+    this.add.existing(stack.getChildren()[2]);
+    */
+
+    // this.innerPanel.setSize(bounds.width, bounds.height);
+    // this.add.existing(this.innerPanel);
+    // container.add(this.innerPanel);
+
+    // container.add([this.outerPanel, this.innerPanel, ...stack.getChildren()]);
+    // container.add(this.innerPanel);
+    this.add.existing(container);
   }
 }

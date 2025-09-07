@@ -39,6 +39,7 @@ export class ButtonContainer extends Phaser.GameObjects.Container {
     this.textGO = new GameObjects.Text(scene, 0, 0, "", {
       // fontFamily: "kenney-future",
       fontFamily: "Roboto",
+      fontStyle: "bold",
       // fontFamily: "Bebas Neue",
       fontSize: 24,
       // color: "#ffffff",

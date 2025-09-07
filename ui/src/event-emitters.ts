@@ -44,7 +44,20 @@ export class ImageGameObject<
 
 export class GroupGameObject<
   SupportedEvents extends EventMap
+  // Type
 > extends GameObjects.Group {
+  /**
+   * Members of this group.
+   */
+  declare children: Phaser.Structs.Set<Phaser.GameObjects.Image>;
+
+  /**
+ * All members of the group.
+ */
+  getChildren(): Phaser.GameObjects.Image[] {
+    return super.getChildren() as Phaser.GameObjects.Image[];
+  }
+
   emit<K extends keyof SupportedEvents>(
     event: K,
     ...args: SupportedEvents[K]
