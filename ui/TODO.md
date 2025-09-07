@@ -1,0 +1,4 @@
+- sound on hover, click of buttons.
+- clicking "settings" should show different UI.
+- animating clouds in the background (parallex, infinite scroll)
+- 
