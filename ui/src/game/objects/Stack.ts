@@ -14,8 +14,6 @@ const AlignTo = function (
     var item = items[i];
 
     var offsetY = offsetYMap?.[i - 1] || defaultOffsetY;
-    // var offsetY = defaultOffsetY;
-    // item.
     Phaser.Display.Align.To.QuickSet(item, target, position, 0, offsetY);
 
     target = item;

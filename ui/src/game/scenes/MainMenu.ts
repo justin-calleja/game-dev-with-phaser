@@ -1,16 +1,7 @@
 import { Scene, GameObjects } from "phaser";
 import { Stack } from "../objects/Stack";
-import {
-  panelGreyWithRedBorder,
-  panelRed,
-  primaryButton as primaryButtonAssetKey,
-  secondaryButton as secondaryButtonAssetKey,
-} from "../../asset-keys";
-import {
-  ButtonContainer,
-  PrimaryButton,
-  SecondaryButton,
-} from "../objects/ButtonContainer";
+import { panelGreyWithRedBorder, panelRed } from "../../asset-keys";
+import { PrimaryButton, SecondaryButton } from "../objects/ButtonContainer";
 
 export class MainMenu extends Scene {
   background: GameObjects.Image;
@@ -30,7 +21,6 @@ export class MainMenu extends Scene {
     const startGameBtn = new PrimaryButton(this, 0, 0);
     startGameBtn.setText("Start game", {
       color: "#ffffff",
-      //   fixedHeight: 64,
     });
 
     const optionsBtn = new SecondaryButton(this, 0, 0);
@@ -55,8 +45,7 @@ export class MainMenu extends Scene {
     // stack.add(creditsBtn);
     // stack.add(exitBtn);
 
-    console.log("outside initialY:", optionsBtn.initialY);
-
+    // console.log("outside initialY:", optionsBtn.initialY);
     // stack.on("aligned", () => {
     //   startGameBtn.initialY = startGameBtn.y;
     //   optionsBtn.initialY = optionsBtn.y;
@@ -75,7 +64,6 @@ export class MainMenu extends Scene {
 
     // Get the stack bounds and add padding
     const stackBounds = stack.getBoundsRect();
-    // const padding = 60; // Add padding around the stack
 
     this.innerPanel = this.make.nineslice(
       {
@@ -129,62 +117,14 @@ export class MainMenu extends Scene {
       titleText,
       ...stack.getChildren(),
     ]);
-    // stack.addBtn(this.make.image({ key: assetKeys.mainmenu.primaryButton }));
-    // stack.addBtn(this.make.image({ key: assetKeys.mainmenu.secondaryButton }));
-    // stack.addBtn(this.make.image({ key: assetKeys.mainmenu.secondaryButton }));
-
-    // this.outerPanel = this.make.image({ key: panelRed }, false);
 
     this.add.existing(container);
 
-    // container.add(this.innerPanel);
-    // container.add(stack.getChildren());
-    // stack.align();
-
-    // const bounds = stack.getBoundsRect();
-    // // const bounds = stack.getBounds(this.innerPanel.getBounds());
-    // // this.graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
     // const graphicsRect = this.make.graphics({
     //   x: 0,
     //   y: 0,
     //   fillStyle: { color: 0x000000, alpha: 0.7 },
     // });
-    // // rect.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
     // graphicsRect.fillRectShape(bounds);
-    // // bounds.
-    // // this.innerPanel.setPosition(0, 0);
-    // // stack.align();
-    // // this.innerPanel.setOrigin(0);
-    // this.innerPanel.setSize(bounds.width + 80, bounds.height + 20 );
-    // this.innerPanel.setOrigin(0.5, 0.5);
-    // // this.innerPanel.height = bounds.height + 800;
-    // // this.innerPanel.setPosition(10, 20);
-    // // console.log(
-    // //   "innerPanel size:",
-    // //   this.innerPanel.width,
-    // //   this.innerPanel.height
-    // // );
-
-    // // container.add(graphicsRect)
-    // this.add.existing(graphicsRect);
-
-    // console.log("bounds:", bounds);
-    // // container.add(stack.getChildren());
-
-    // // Set innerPanel size and position to cover all stack children
-    // // this.innerPanel.setPosition(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
-
-    // /*
-    // this.add.existing(stack.getChildren()[0]);
-    // this.add.existing(stack.getChildren()[1]);
-    // this.add.existing(stack.getChildren()[2]);
-    // */
-
-    // // this.innerPanel.setSize(bounds.width, bounds.height);
-    // // this.add.existing(this.innerPanel);
-    // // container.add(this.innerPanel);
-
-    // // container.add([this.outerPanel, this.innerPanel, ...stack.getChildren()]);
-    // // container.add(this.innerPanel);
   }
 }
