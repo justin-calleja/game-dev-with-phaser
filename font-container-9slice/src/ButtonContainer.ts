@@ -1,5 +1,5 @@
 import { GameObjects, Input, type Scene } from "phaser";
-import { defaultBtn, hoverBtn, pressedBtn } from "./assetKeys";
+import { defaultBtn, pressedBtn } from "./assetKeys";
 
 export type SupportedEvents = {
   "click-even": [];
