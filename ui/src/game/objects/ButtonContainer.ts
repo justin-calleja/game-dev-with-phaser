@@ -44,13 +44,13 @@ export class ButtonContainer extends Phaser.GameObjects.Container {
       fontSize: 24,
       // color: "#ffffff",
       color: "#000000",
-      fixedWidth: 200,
+      fixedWidth: 240,
       // stroke: "#000000",
       // strokeThickness: 8,
       align: "center",
     });
     this.textGO.setOrigin(0.5, 0.6);
-    this.imageGO.width = this.textGO.width + 40;
+    // this.imageGO.width = this.textGO.width + 40;
 
     this.add([this.imageGO, this.textGO]);
 
@@ -89,7 +89,11 @@ export class ButtonContainer extends Phaser.GameObjects.Container {
     }
 
     this.imageGO.width = this.textGO.width + 40;
-    this.imageGO.height = this.textGO.height + 40;
+    this.imageGO.height = this.textGO.height + 30;
+  }
+
+  onAlign() {
+    this.initialY = this.y;
   }
 
   protected onPointerOver() {
@@ -109,5 +113,23 @@ export class ButtonContainer extends Phaser.GameObjects.Container {
   protected onPointerUp() {
     this.imageGO.setTexture(this.assetKeys.normal);
     this.y -= this.yOffset;
+  }
+}
+
+export class PrimaryButton extends ButtonContainer {
+  constructor(scene: Scene, x: number, y: number) {
+    super(scene, x, y, primaryButton);
+  }
+
+  public setText(text: string, style?: Phaser.Types.GameObjects.Text.TextStyle) {
+    super.setText(text, style);
+    this.imageGO.height += 14;
+    this.height += 14;
+  }
+}
+
+export class SecondaryButton extends ButtonContainer {
+  constructor(scene: Scene, x: number, y: number) {
+    super(scene, x, y, secondaryButton);
   }
 }

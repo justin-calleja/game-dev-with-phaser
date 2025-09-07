@@ -1,16 +1,20 @@
 import { Scene, GameObjects } from "phaser";
-// import { mainMenu } from "../../asset-keys";
 import { Stack } from "../objects/Stack";
 import {
   panelGreyWithRedBorder,
+  panelRed,
   primaryButton as primaryButtonAssetKey,
   secondaryButton as secondaryButtonAssetKey,
 } from "../../asset-keys";
-import { ButtonContainer } from "../objects/ButtonContainer";
+import {
+  ButtonContainer,
+  PrimaryButton,
+  SecondaryButton,
+} from "../objects/ButtonContainer";
 
 export class MainMenu extends Scene {
   background: GameObjects.Image;
-  outerPanel: GameObjects.Image;
+  outerPanel: GameObjects.NineSlice;
   innerPanel: GameObjects.NineSlice;
 
   constructor() {
@@ -23,42 +27,50 @@ export class MainMenu extends Scene {
     const centerX = this.scale.width / 2;
     const centerY = this.scale.height / 2;
 
-    const startGameBtn = new ButtonContainer(this, 0, 0, primaryButtonAssetKey);
+    const startGameBtn = new PrimaryButton(this, 0, 0);
     startGameBtn.setText("Start game", {
       color: "#ffffff",
+      //   fixedHeight: 64,
     });
 
-    const optionsBtn = new ButtonContainer(this, 0, 0, secondaryButtonAssetKey);
+    const optionsBtn = new SecondaryButton(this, 0, 0);
     // secondaryButton.setText("Options", { fontFamily: "Bebas Neue" });
     optionsBtn.setText("Options");
 
-    const creditsBtn = new ButtonContainer(this, 0, 0, secondaryButtonAssetKey);
+    const creditsBtn = new SecondaryButton(this, 0, 0);
     creditsBtn.setText("Credits");
 
-    // const stackContainer = new StackContainer(this, centerX, centerY);
-    const stack = new Stack(this);
+    const exitBtn = new SecondaryButton(this, 0, 0);
+    exitBtn.setText("Exit");
 
-    stack.add(startGameBtn);
-    stack.add(optionsBtn);
-    stack.add(creditsBtn);
+    const stack = new Stack(this, [
+      startGameBtn,
+      optionsBtn,
+      creditsBtn,
+      exitBtn,
+    ]);
+
+    // stack.add(startGameBtn);
+    // stack.add(optionsBtn);
+    // stack.add(creditsBtn);
+    // stack.add(exitBtn);
 
     console.log("outside initialY:", optionsBtn.initialY);
 
-    stack.on("aligned", () => {
-      startGameBtn.initialY = startGameBtn.y;
-      optionsBtn.initialY = optionsBtn.y;
-      //   creditsBtn.y += 24;
-      creditsBtn.initialY = creditsBtn.y;
+    // stack.on("aligned", () => {
+    //   startGameBtn.initialY = startGameBtn.y;
+    //   optionsBtn.initialY = optionsBtn.y;
+    //   creditsBtn.initialY = creditsBtn.y;
+    //   exitBtn.initialY = exitBtn.y;
 
-      console.log("initialY:", optionsBtn.initialY);
-    });
-    stack.align();
+    //   console.log("initialY:", optionsBtn.initialY);
+    // });
+    // stack.align();
 
     const container = new Phaser.GameObjects.Container(
       this,
       centerX,
       centerY - centerY / 2
-      //   centerY
     );
 
     // Get the stack bounds and add padding
@@ -67,8 +79,6 @@ export class MainMenu extends Scene {
 
     this.innerPanel = this.make.nineslice(
       {
-        // x: stackBounds.x - padding / 2,
-        // y: stackBounds.y - padding / 2,
         key: panelGreyWithRedBorder,
         leftWidth: 10,
         rightWidth: 10,
@@ -76,25 +86,49 @@ export class MainMenu extends Scene {
         bottomHeight: 10,
         width: stackBounds.width + 60,
         height: stackBounds.height + 60,
+        x: stackBounds.centerX,
+        y: stackBounds.centerY,
       },
       false
     );
-    // this.innerPanel.setOrigin(0.5, 0);
 
-    // Phaser.Actions.AlignTo(
-    // //   [this.innerPanel, stack.getChildren()[0]],
-    //   [stack.getChildren()[1], this.innerPanel],
-    //   Phaser.Display.Align.CENTER,
-    //   0,
-    //   14
-    // );
+    const titleText = this.make.text(
+      {
+        x: 0,
+        y: this.innerPanel.getTopCenter().y - 22,
+        text: "Game Title",
+        style: {
+          fontFamily: "Roboto",
+          fontSize: 28,
+          color: "#ffffff",
+          fontStyle: "bold",
+        },
+      },
+      false
+    );
+    titleText.setOrigin(0.5, 0.5);
 
-    const x = stack.getChildren()[1].x;
-    const y = stack.getChildren()[1].y;
-    // .getCenter();
-    this.innerPanel.setPosition(x, y);
+    this.outerPanel = this.make.nineslice(
+      {
+        key: panelRed,
+        leftWidth: 10,
+        rightWidth: 10,
+        topHeight: 10,
+        bottomHeight: 10,
+        width: this.innerPanel.width,
+        height: this.innerPanel.height + titleText.height + 4,
+        x: this.innerPanel.x,
+        y: this.innerPanel.y - titleText.height - 4,
+      },
+      false
+    );
 
-    container.add([this.innerPanel, ...stack.getChildren()]);
+    container.add([
+      this.outerPanel,
+      this.innerPanel,
+      titleText,
+      ...stack.getChildren(),
+    ]);
     // stack.addBtn(this.make.image({ key: assetKeys.mainmenu.primaryButton }));
     // stack.addBtn(this.make.image({ key: assetKeys.mainmenu.secondaryButton }));
     // stack.addBtn(this.make.image({ key: assetKeys.mainmenu.secondaryButton }));
