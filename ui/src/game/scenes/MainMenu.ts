@@ -59,7 +59,7 @@ export class MainMenu extends Scene {
     const container = new Phaser.GameObjects.Container(
       this,
       centerX,
-      centerY - centerY / 2
+      centerY * 0.75,
     );
 
     // Get the stack bounds and add padding
