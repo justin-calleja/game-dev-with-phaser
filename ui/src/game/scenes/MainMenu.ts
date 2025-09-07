@@ -57,13 +57,13 @@ export class MainMenu extends Scene {
     const container = new Phaser.GameObjects.Container(
       this,
       centerX,
-      //   centerY - centerY / 2
-      centerY
+      centerY - centerY / 2
+      //   centerY
     );
 
     // Get the stack bounds and add padding
     const stackBounds = stack.getBoundsRect();
-    const padding = 20; // Add padding around the stack
+    // const padding = 60; // Add padding around the stack
 
     this.innerPanel = this.make.nineslice(
       {
@@ -74,15 +74,27 @@ export class MainMenu extends Scene {
         rightWidth: 10,
         topHeight: 10,
         bottomHeight: 10,
-        width: stackBounds.width + padding,
-        height: stackBounds.height + padding,
+        width: stackBounds.width + 60,
+        height: stackBounds.height + 60,
       },
       false
     );
     // this.innerPanel.setOrigin(0.5, 0);
 
-    container.add([this.innerPanel, ...stack.getChildren()]);
+    // Phaser.Actions.AlignTo(
+    // //   [this.innerPanel, stack.getChildren()[0]],
+    //   [stack.getChildren()[1], this.innerPanel],
+    //   Phaser.Display.Align.CENTER,
+    //   0,
+    //   14
+    // );
 
+    const x = stack.getChildren()[1].x;
+    const y = stack.getChildren()[1].y;
+    // .getCenter();
+    this.innerPanel.setPosition(x, y);
+
+    container.add([this.innerPanel, ...stack.getChildren()]);
     // stack.addBtn(this.make.image({ key: assetKeys.mainmenu.primaryButton }));
     // stack.addBtn(this.make.image({ key: assetKeys.mainmenu.secondaryButton }));
     // stack.addBtn(this.make.image({ key: assetKeys.mainmenu.secondaryButton }));
