@@ -63,6 +63,9 @@ export class Preloader extends Scene {
     );
 
     this.load.audio(clickB, "sound/click-b.ogg");
+
+    // this.load.bitmapFont("pixelFont", "tmp/font.png", "tmp/font.json");
+    // this.load.bitmapFont("pixelFont", "texturepacker/font.png", "texturepacker/font.xml");
   }
 
   create() {

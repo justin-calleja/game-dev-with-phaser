@@ -1,7 +1,10 @@
 import { Scene, GameObjects } from "phaser";
 import { MainMenuContainer } from "../objects/MainMenuContainer";
+import { RegistryDataManager } from "../../types";
 
 export class MainMenu extends Scene {
+  declare registry: RegistryDataManager;
+
   background: GameObjects.Image;
   mainMenuContainer: MainMenuContainer;
 
@@ -24,7 +27,8 @@ export class MainMenu extends Scene {
     this.add.existing(this.mainMenuContainer);
 
     this.mainMenuContainer.on("optionsBtnClicked", () => {
-      console.log("optionsBtnClicked");
+      this.registry.toggle("isBgMusicEnabled");
+      console.log("isBgMusicEnabled:", this.registry.get("isBgMusicEnabled"));
     });
   }
 }
