@@ -17,7 +17,7 @@ export class MainMenuContainer extends ContainerGameObject<SupportedEvents> {
   startGameBtn: PrimaryButton;
   optionsBtn: SecondaryButton;
   creditsBtn: SecondaryButton;
-  exitBtn: SecondaryButton;
+  quitBtn: SecondaryButton;
 
   stack: Stack;
 
@@ -40,14 +40,14 @@ export class MainMenuContainer extends ContainerGameObject<SupportedEvents> {
     this.creditsBtn = new SecondaryButton(scene, 0, 0);
     this.creditsBtn.setText("Credits");
 
-    this.exitBtn = new SecondaryButton(scene, 0, 0);
-    this.exitBtn.setText("Exit");
+    this.quitBtn = new SecondaryButton(scene, 0, 0);
+    this.quitBtn.setText("Quit");
 
     this.stack = new Stack(scene, [
       this.startGameBtn,
       this.optionsBtn,
       this.creditsBtn,
-      this.exitBtn,
+      this.quitBtn,
     ]);
 
     // this.stack.add(this.startGameBtn);

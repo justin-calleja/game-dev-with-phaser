@@ -38,6 +38,10 @@ export class StateMachine<T extends string> {
     return this.currentState?.name === name;
   }
 
+  getCurrentStateName(): T | undefined {
+	return this.currentState?.name;
+  }
+
   setState(name: T) {
     const nextState = this.states.get(name);
 
