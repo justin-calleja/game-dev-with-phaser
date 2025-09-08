@@ -14,3 +14,5 @@ export const secondaryButton = {
   pressed: "secondary-button-pressed",
 } as const;
 
+
+export const clickB = "click-b";

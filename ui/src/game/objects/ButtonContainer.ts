@@ -1,5 +1,5 @@
 import { GameObjects, Input, type Scene } from "phaser";
-import { primaryButton, secondaryButton } from "../../asset-keys";
+import { clickB, primaryButton, secondaryButton } from "../../asset-keys";
 
 export type SupportedEvents = {
   // pointerdown: [];
@@ -108,6 +108,7 @@ export class ButtonContainer extends Phaser.GameObjects.Container {
   protected onPointerDown() {
     this.imageGO.setTexture(this.assetKeys.pressed);
     this.y += this.yOffset;
+    this.scene.sound.play(clickB);
   }
 
   protected onPointerUp() {

@@ -4,6 +4,7 @@ import {
   primaryButton,
   secondaryButton,
   panelGreyWithRedBorder,
+  clickB,
 } from "../../asset-keys";
 
 export class Preloader extends Scene {
@@ -60,6 +61,8 @@ export class Preloader extends Scene {
       // "grey/button_rectangle_depth_border.png"
       "grey/button_rectangle_depth_flat.png"
     );
+
+    this.load.audio(clickB, "sound/click-b.ogg");
   }
 
   create() {

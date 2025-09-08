@@ -2,8 +2,13 @@ import type { GameObjects, Scene } from "phaser";
 import { Stack } from "./Stack";
 import { PrimaryButton, SecondaryButton } from "./ButtonContainer";
 import { panelGreyWithRedBorder, panelRed } from "../../asset-keys";
+import { ContainerGameObject } from "../../event-emitters";
 
-export class MainMenuContainer extends Phaser.GameObjects.Container {
+export type SupportedEvents = {
+  optionsBtnClicked: [];
+};
+
+export class MainMenuContainer extends ContainerGameObject<SupportedEvents> {
   outerPanel: GameObjects.NineSlice;
   innerPanel: GameObjects.NineSlice;
 
@@ -27,6 +32,10 @@ export class MainMenuContainer extends Phaser.GameObjects.Container {
     this.optionsBtn = new SecondaryButton(scene, 0, 0);
     // secondaryButton.setText("Options", { fontFamily: "Bebas Neue" });
     this.optionsBtn.setText("Options");
+
+    this.optionsBtn.on("pointerdown", () => {
+        this.emit("optionsBtnClicked");
+    });
 
     this.creditsBtn = new SecondaryButton(scene, 0, 0);
     this.creditsBtn.setText("Credits");

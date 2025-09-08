@@ -22,5 +22,9 @@ export class MainMenu extends Scene {
     );
 
     this.add.existing(this.mainMenuContainer);
+
+    this.mainMenuContainer.on("optionsBtnClicked", () => {
+      console.log("optionsBtnClicked");
+    });
   }
 }
