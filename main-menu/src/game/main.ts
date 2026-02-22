@@ -4,25 +4,23 @@ import { MainMenu } from "./scenes/MainMenu";
 import { Preloader } from "./scenes/Preloader";
 
 const config: Phaser.Types.Core.GameConfig = {
-	type: AUTO,
-	scale: {
-		width: 1024,
-		height: 768,
-		// width: 500,
-		// height: 320,
-		mode: Phaser.Scale.FIT,
-		autoCenter: Phaser.Scale.CENTER_BOTH,
-	},
-	render: {
-		pixelArt: true,
-	},
-	parent: "game-container",
-	backgroundColor: "#33A5E7",
-	scene: [Boot, Preloader, MainMenu],
+    type: AUTO,
+    scale: {
+        width: 1024,
+        height: 768,
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+    },
+    render: {
+        pixelArt: true,
+    },
+    parent: "game-container",
+    backgroundColor: "#33A5E7",
+    scene: [Boot, Preloader, MainMenu],
 };
 
 const StartGame = (parent: string) => {
-	return new Game({ ...config, parent });
+    return new Game({ ...config, parent });
 };
 
 export default StartGame;
