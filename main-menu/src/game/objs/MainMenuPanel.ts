@@ -1,5 +1,5 @@
 import { GameObjects, type Scene } from "phaser";
-import { defaultTextStyle } from "../../utils";
+import { defaultNineSliceConfig, defaultTextStyle } from "../../utils";
 
 export interface ContentItem extends GameObjects.GameObject {
     width: number;
@@ -7,6 +7,9 @@ export interface ContentItem extends GameObjects.GameObject {
     x: number;
     y: number;
 }
+
+// This is the amount by which the bgPanel sticks out over and above the fgPanel.
+const defaultVisibleBgPanelHeight = 60;
 
 export class MainMenuPanel extends GameObjects.Container {
     titleText: GameObjects.Text;
@@ -19,6 +22,27 @@ export class MainMenuPanel extends GameObjects.Container {
         super(scene, x, y);
 
         this.contentList = [];
+
+        this.fgPanel = scene.make.nineslice(
+            {
+                ...defaultNineSliceConfig,
+                key: "panel-grey-with-red-border",
+                width: 400,
+                height: 300,
+            },
+            false,
+        );
+
+        this.bgPanel = scene.make.nineslice(
+            {
+                ...defaultNineSliceConfig,
+                key: "red-panel",
+                width: this.fgPanel.width,
+                height: this.fgPanel.height / 2 + defaultVisibleBgPanelHeight,
+            },
+            false,
+        );
+        this.bgPanel.setOrigin(0.5, 1);
 
         this.titleText = new GameObjects.Text(scene, 0, 0, "", {
             ...defaultTextStyle,

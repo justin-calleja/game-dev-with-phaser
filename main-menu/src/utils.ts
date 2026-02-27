@@ -17,14 +17,15 @@ export const addCross = (
     return graphics;
 };
 
-export const defaultNineSliceConfig = {
-    x: 0,
-    y: 0,
-    leftWidth: 10,
-    rightWidth: 10,
-    topHeight: 10,
-    bottomHeight: 10,
-};
+export const defaultNineSliceConfig: Types.GameObjects.NineSlice.NineSliceConfig =
+    {
+        x: 0,
+        y: 0,
+        leftWidth: 10,
+        rightWidth: 10,
+        topHeight: 10,
+        bottomHeight: 10,
+    };
 
 export const defaultTextStyle: Types.GameObjects.Text.TextStyle = {
     fontFamily: "Arial Black",

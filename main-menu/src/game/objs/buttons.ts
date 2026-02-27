@@ -1,5 +1,5 @@
 import { GameObjects, Input, type Scene } from "phaser";
-import { defaultTextStyle } from "../../utils";
+import { defaultNineSliceConfig, defaultTextStyle } from "../../utils";
 
 export class ButtonContainer extends Phaser.GameObjects.Container {
     nineSliceObj: GameObjects.NineSlice;
@@ -20,13 +20,8 @@ export class ButtonContainer extends Phaser.GameObjects.Container {
         this.assetKey = assetKey;
 
         this.nineSliceObj = scene.make.nineslice({
-            x: 0,
-            y: 0,
+            ...defaultNineSliceConfig,
             key: assetKey,
-            leftWidth: 10,
-            rightWidth: 10,
-            topHeight: 10,
-            bottomHeight: 10,
             width: 190,
             height: 49,
         });
