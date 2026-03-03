@@ -1,5 +1,5 @@
 import { GameObjects, type Scene } from "phaser";
-import { defaultNineSliceConfig, defaultTextStyle } from "../../utils";
+import { defaultNineSliceConfig, defaultTextStyle } from "../../../utils";
 
 export interface ContentItem extends GameObjects.GameObject {
     width: number;
@@ -11,7 +11,7 @@ export interface ContentItem extends GameObjects.GameObject {
 // This is the amount by which the bgPanel sticks out over and above the fgPanel.
 const defaultVisibleBgPanelHeight = 60;
 
-export class MainMenuPanel extends GameObjects.Container {
+export class MenuPanel extends GameObjects.Container {
     titleText: GameObjects.Text;
     bgPanel: GameObjects.NineSlice;
     fgPanel: GameObjects.NineSlice;
@@ -60,8 +60,19 @@ export class MainMenuPanel extends GameObjects.Container {
 
     setContent(contentList: ContentItem[]) {
         this.contentList = contentList;
-        for (const item of this.contentList) {
-            this.add(item);
+        this.add(contentList);
+    }
+
+    protected repositionContent() {
+        if (this.contentList.length === 0) {
+            return;
         }
+
+        Phaser.Actions.AlignTo(
+            this.contentList,
+            Phaser.Display.Align.BOTTOM_CENTER,
+            0,
+            10,
+        );
     }
 }
