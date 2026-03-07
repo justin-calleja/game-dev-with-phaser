@@ -4,7 +4,6 @@ import { defaultNineSliceConfig, defaultTextStyle } from "../../utils";
 export class ButtonContainer extends Phaser.GameObjects.Container {
     nineSliceObj: GameObjects.NineSlice;
     textObj: GameObjects.Text;
-    initialY: number;
     yOffset = 2;
     assetKey: string;
 
@@ -16,7 +15,6 @@ export class ButtonContainer extends Phaser.GameObjects.Container {
         assetKey: string,
     ) {
         super(scene, x, y);
-        this.initialY = y;
         this.assetKey = assetKey;
 
         this.nineSliceObj = scene.make.nineslice({
@@ -44,11 +42,19 @@ export class ButtonContainer extends Phaser.GameObjects.Container {
     }
 
     protected onPointerOver() {
-        this.y += this.yOffset;
+        this.nineSliceObj.setSize(
+            this.nineSliceObj.width * 1.08,
+            this.nineSliceObj.height * 1.08,
+        );
+        this.textObj.setScale(1.08);
     }
 
     protected onPointerOut() {
-        this.y = this.initialY;
+        this.nineSliceObj.setSize(
+            this.nineSliceObj.width / 1.08,
+            this.nineSliceObj.height / 1.08,
+        );
+        this.textObj.setScale(1);
     }
 
     protected onPointerDown() {
@@ -57,10 +63,6 @@ export class ButtonContainer extends Phaser.GameObjects.Container {
 
     protected onPointerUp() {
         this.y -= this.yOffset;
-    }
-
-    public setInitialY(y: number) {
-        this.initialY = y;
     }
 }
 

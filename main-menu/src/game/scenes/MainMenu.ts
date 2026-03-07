@@ -13,7 +13,7 @@ export class MainMenu extends Scene {
         const centerX = this.scale.width / 2;
         const centerY = this.scale.height / 2;
 
-        this.mainPanel = new MainPanel(this, centerX, centerY);
+        this.mainPanel = new MainPanel(this, centerX, centerY - 100);
         this.add.existing(this.mainPanel);
         this.add.existing(addCross(this, this.mainPanel.x, this.mainPanel.y));
     }
