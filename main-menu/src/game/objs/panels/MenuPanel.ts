@@ -297,6 +297,12 @@ export class MenuPanel extends GameObjects.Container {
         }
     }
 
+    resetScroll() {
+        if (this.#isScrollable) {
+            this.setScrollY(0);
+        }
+    }
+
     private setScrollY(value: number) {
         this.#scrollY = Phaser.Math.Clamp(value, 0, this.#maxScroll);
         this.scrollContainer.y = -this.#scrollY;

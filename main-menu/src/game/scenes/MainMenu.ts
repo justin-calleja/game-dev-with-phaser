@@ -26,6 +26,7 @@ export class MainMenu extends Scene {
         });
 
         this.creditsPanel.on("back", () => {
+            this.creditsPanel.resetScroll();
             this.creditsPanel.setVisible(false);
             this.mainPanel.setVisible(true);
         });
