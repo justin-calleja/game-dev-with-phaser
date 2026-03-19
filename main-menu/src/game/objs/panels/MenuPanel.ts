@@ -29,6 +29,7 @@ const trackAlpha = 0.12;
 const thumbColor = 0x666666;
 const thumbAlpha = 0.5;
 const thumbMinHeight = 24;
+const thumbHitPadding = 12;
 
 export class MenuPanel extends GameObjects.Container {
     #boundingBox = new Geom.Rectangle();
@@ -239,15 +240,16 @@ export class MenuPanel extends GameObjects.Container {
         this.add(this.#thumbGraphics);
         this.drawThumb();
 
-        this.#thumbGraphics.setInteractive(
-            new Geom.Rectangle(
-                this.#trackX,
+        this.#thumbGraphics.setInteractive({
+            hitArea: new Geom.Rectangle(
+                this.#trackX - thumbHitPadding,
                 this.#trackY,
-                scrollbarWidth,
+                scrollbarWidth + thumbHitPadding * 2,
                 this.#thumbHeight,
             ),
-            Geom.Rectangle.Contains,
-        );
+            hitAreaCallback: Geom.Rectangle.Contains,
+            useHandCursor: true,
+        });
         this.#thumbGraphics.on(
             Input.Events.GAMEOBJECT_POINTER_DOWN,
             this.onThumbDragStart,
@@ -287,9 +289,9 @@ export class MenuPanel extends GameObjects.Container {
 
         if (this.#thumbGraphics.input) {
             this.#thumbGraphics.input.hitArea.setTo(
-                this.#trackX,
+                this.#trackX - thumbHitPadding,
                 thumbY,
-                scrollbarWidth,
+                scrollbarWidth + thumbHitPadding * 2,
                 this.#thumbHeight,
             );
         }
