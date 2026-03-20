@@ -11,8 +11,10 @@ export class MainPanel extends MenuPanel {
         const btn1 = new PrimaryButton(scene, 0, 0, "Start game");
         const btn2 = new SecondaryButton(scene, 0, 0, "Options");
         const btn3 = new SecondaryButton(scene, 0, 0, "Credits");
+        const btn4 = new SecondaryButton(scene, 0, 0, "Something");
         const btn5 = new SecondaryButton(scene, 0, 0, "Quit");
-        const btns = [btn1, btn2, btn3, btn5];
+        const btn6 = new SecondaryButton(scene, 0, 0, "Abc");
+        const btns = [btn1, btn2, btn3, btn4, btn5, btn6];
 
         btn3.on(Input.Events.GAMEOBJECT_POINTER_UP, () => {
             this.emit("credits");

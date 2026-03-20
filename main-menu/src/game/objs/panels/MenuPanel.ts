@@ -1,9 +1,9 @@
 import { GameObjects, Geom, type Scene } from "phaser";
 import {
-    // addCross,
+    addCross,
     defaultNineSliceConfig,
     defaultTextStyle,
-    // drawDebugRect,
+    drawDebugRect,
     getCombinedBounds,
 } from "../../../utils";
 import { ScrollableContainer } from "../ScrollableContainer";
@@ -99,14 +99,7 @@ export class MenuPanel extends GameObjects.Container {
 
     protected resize() {
         getCombinedBounds(this.contentList, this.#boundingBox);
-        // drawDebugRect(this.scene, this.#boundingBox, this);
-        // this.add(
-        //     addCross(
-        //         this.scene,
-        //         this.#boundingBox.centerX,
-        //         this.#boundingBox.centerY,
-        //     ),
-        // );
+        drawDebugRect(this.scene, this.#boundingBox, this);
 
         const bbox = this.#boundingBox;
         const contentHeight = bbox.height;
@@ -125,6 +118,16 @@ export class MenuPanel extends GameObjects.Container {
         this.fgPanel.width = fgWidth;
         this.fgPanel.height = fgHeight;
 
+        this.add(
+            addCross(
+                this.scene,
+                this.fgPanel.x,
+                this.fgPanel.y,
+                // this.#boundingBox.centerX,
+                // this.#boundingBox.centerY,
+            ),
+        );
+
         if (needsScrolling) {
             this.fgPanel.y = bbox.top + visibleHeight / 2;
         } else {
@@ -139,9 +142,7 @@ export class MenuPanel extends GameObjects.Container {
 
         this.titleText.x = this.fgPanel.x;
         this.titleText.y =
-            this.fgPanel.y -
-            this.bgPanel.height +
-            defaultTitleMarginTop;
+            this.fgPanel.y - this.bgPanel.height + defaultTitleMarginTop;
 
         if (needsScrolling) {
             this.scrollable.enableScrolling(
@@ -153,7 +154,8 @@ export class MenuPanel extends GameObjects.Container {
                 },
                 contentHeight,
             );
-            this.bringToTop(this.titleText);
+            // Only needed if layers added after title is added (e.g. scrollbar rectangles) overlap in screen space:
+            // this.bringToTop(this.titleText);
         }
     }
 
