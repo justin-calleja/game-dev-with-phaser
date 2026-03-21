@@ -234,10 +234,10 @@ export class ScrollableContent {
         }
 
         this.#originalPositions = this.contentList.map((item) => item.y);
-        const contentHeight = this.#boundingBox.height;
+        const totalContentHeight = this.#boundingBox.height + this.#props.padding * 2;
         const viewportHeight = this.expandedBox.height;
-        this.#isScrollable = contentHeight > viewportHeight;
-        this.#maxScroll = this.#isScrollable ? contentHeight - viewportHeight : 0;
+        this.#isScrollable = totalContentHeight > viewportHeight;
+        this.#maxScroll = this.#isScrollable ? totalContentHeight - viewportHeight : 0;
         this.#scrollY = 0;
 
         if (this.#isScrollable) {
