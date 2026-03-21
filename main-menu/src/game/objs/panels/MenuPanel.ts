@@ -1,38 +1,32 @@
 import { GameObjects, Geom, type Scene } from "phaser";
 import {
-    // addCross,
+    addCross,
     defaultNineSliceConfig,
     defaultTextStyle,
     // drawDebugRect,
     getCombinedBounds,
 } from "../../../utils";
-
-export interface ContentItem extends GameObjects.GameObject {
-    width: number;
-    height: number;
-    x: number;
-    y: number;
-}
+import { ContentItem, ScrollableContent } from "../ScrollableContent";
 
 // This is the amount by which the bgPanel sticks out over and above the fgPanel.
 const defaultVisibleBgPanelHeight = 60;
 const defaultMinWidth = 200;
 const defaultMargin = 40;
 const defaultTitleMarginTop = 36;
-const defaultGap = 16;
 
 export class MenuPanel extends GameObjects.Container {
-    #boundingBox = new Geom.Rectangle();
     titleText: GameObjects.Text;
     bgPanel: GameObjects.NineSlice;
     fgPanel: GameObjects.NineSlice;
 
-    contentList: ContentItem[];
+    scrollableContent: ScrollableContent;
 
     constructor(scene: Scene, x: number, y: number) {
         super(scene, x, y);
+        console.log("x: ", x, "y: ", y);
 
-        this.contentList = [];
+        // scene.add.existing
+        // this.contentList = [];
 
         this.fgPanel = scene.make.nineslice(
             {
@@ -43,6 +37,13 @@ export class MenuPanel extends GameObjects.Container {
             },
             false,
         );
+
+        this.scrollableContent = new ScrollableContent({
+            scene,
+            maxHeight: 200,
+            container: this,
+            targetOfMask: this.fgPanel,
+        });
 
         this.bgPanel = scene.make.nineslice(
             {
@@ -70,51 +71,33 @@ export class MenuPanel extends GameObjects.Container {
     }
 
     setContent(contentList: ContentItem[]) {
-        this.contentList = contentList;
-        this.add(contentList);
+        this.scrollableContent.setContent(contentList);
+        // if (this.scrollableContent.mask) {
+        //     this.add(this.scrollableContent.mask);
+        // }
+        // this.scrollableContent.abc();
+        this.add(this.scrollableContent.contentList);
+        this.#resize();
     }
 
-    protected repositionContent() {
-        if (this.contentList.length === 0) {
-            return;
-        }
-
-        Phaser.Actions.AlignTo(
-            this.contentList,
-            Phaser.Display.Align.BOTTOM_CENTER,
-            0,
-            defaultGap,
-        );
-    }
-
-    protected resize() {
-        getCombinedBounds(this.contentList, this.#boundingBox);
-        // drawDebugRect(this.scene, this.#boundingBox, this);
-        // this.add(
-        //     addCross(
-        //         this.scene,
-        //         this.#boundingBox.centerX,
-        //         this.#boundingBox.centerY,
-        //     ),
-        // );
-
-        this.fgPanel.x = this.#boundingBox.centerX;
-        this.fgPanel.y = this.#boundingBox.centerY;
+    #resize() {
+        this.fgPanel.x = this.scrollableContent.centerX;
+        this.fgPanel.y = this.scrollableContent.centerY;
         this.fgPanel.width = Math.max(
-            this.#boundingBox.width + defaultMargin * 2,
+            this.scrollableContent.width + defaultMargin * 2,
             defaultMinWidth,
         );
-        this.fgPanel.height = this.#boundingBox.height + defaultMargin * 2;
+        this.fgPanel.height = this.scrollableContent.height + defaultMargin * 2;
 
-        this.bgPanel.x = this.#boundingBox.centerX;
-        this.bgPanel.y = this.#boundingBox.centerY;
+        this.bgPanel.x = this.scrollableContent.centerX;
+        this.bgPanel.y = this.scrollableContent.centerY;
         this.bgPanel.width = this.fgPanel.width;
         this.bgPanel.height =
             this.fgPanel.height / 2 + defaultVisibleBgPanelHeight;
 
-        this.titleText.x = this.#boundingBox.centerX;
+        this.titleText.x = this.scrollableContent.centerX;
         this.titleText.y =
-            this.#boundingBox.centerY -
+            this.scrollableContent.centerY -
             this.bgPanel.height +
             defaultTitleMarginTop;
     }

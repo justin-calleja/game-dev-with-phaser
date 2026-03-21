@@ -15,6 +15,6 @@ export class MainMenu extends Scene {
 
         this.mainPanel = new MainPanel(this, centerX, centerY - 100);
         this.add.existing(this.mainPanel);
-        this.add.existing(addCross(this, this.mainPanel.x, this.mainPanel.y));
+        // this.add.existing(addCross(this, this.mainPanel.x, this.mainPanel.y));
     }
 }
