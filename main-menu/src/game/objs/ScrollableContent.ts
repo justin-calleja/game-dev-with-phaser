@@ -39,6 +39,10 @@ export class ScrollableContent {
     expandedBox = new Geom.Rectangle();
     #maskGraphics: GameObjects.Graphics | null = null;
     mask: Display.Masks.GeometryMask | null = null;
+    #isScrollable = false;
+    #maxScroll = 0;
+    #scrollY = 0;
+    #originalPositions: number[] = [];
     #props: Omit<Required<Props>, "container"> & Pick<Props, "container">;
 
     constructor(props: Props) {
@@ -229,6 +233,27 @@ export class ScrollableContent {
             (item as unknown as GameObjects.Components.Mask).setMask(this.mask);
         }
 
+        this.#originalPositions = this.contentList.map((item) => item.y);
+        const contentHeight = this.#boundingBox.height;
+        const viewportHeight = this.expandedBox.height;
+        this.#isScrollable = contentHeight > viewportHeight;
+        this.#maxScroll = this.#isScrollable ? contentHeight - viewportHeight : 0;
+        this.#scrollY = 0;
+
+        if (this.#isScrollable) {
+            this.#props.scene.input.on(
+                'wheel',
+                (_pointer: Input.Pointer, _gameObjects: GameObjects.GameObject[], _deltaX: number, deltaY: number) => {
+                    this.#scrollY = Phaser.Math.Clamp(
+                        this.#scrollY + deltaY * 0.5,
+                        0,
+                        this.#maxScroll,
+                    );
+                    this.#applyScroll();
+                },
+            );
+        }
+
         drawDebugRect(
             this.#props.scene,
             this.#boundingBox,
@@ -249,6 +274,12 @@ export class ScrollableContent {
         // );
 
         // this.enableScrolling();
+    }
+
+    #applyScroll() {
+        for (let i = 0; i < this.contentList.length; i++) {
+            this.contentList[i].y = this.#originalPositions[i] - this.#scrollY;
+        }
     }
 
     #repositionContent() {
