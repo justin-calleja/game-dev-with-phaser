@@ -1,38 +1,29 @@
-import { GameObjects, Geom, type Scene } from "phaser";
+import { GameObjects, type Scene } from "phaser";
 import {
-    // addCross,
+    addCross,
     defaultNineSliceConfig,
     defaultTextStyle,
     // drawDebugRect,
-    getCombinedBounds,
 } from "../../../utils";
-
-export interface ContentItem extends GameObjects.GameObject {
-    width: number;
-    height: number;
-    x: number;
-    y: number;
-}
+import { ContentItem, ScrollableContent } from "../ScrollableContent";
 
 // This is the amount by which the bgPanel sticks out over and above the fgPanel.
 const defaultVisibleBgPanelHeight = 60;
 const defaultMinWidth = 200;
 const defaultMargin = 40;
 const defaultTitleMarginTop = 36;
-const defaultGap = 16;
 
 export class MenuPanel extends GameObjects.Container {
-    #boundingBox = new Geom.Rectangle();
     titleText: GameObjects.Text;
     bgPanel: GameObjects.NineSlice;
     fgPanel: GameObjects.NineSlice;
 
-    contentList: ContentItem[];
+    #scrollableContent: ScrollableContent;
 
     constructor(scene: Scene, x: number, y: number) {
         super(scene, x, y);
 
-        this.contentList = [];
+        this.#scrollableContent = new ScrollableContent(scene, 0, 0);
 
         this.fgPanel = scene.make.nineslice(
             {
@@ -62,7 +53,12 @@ export class MenuPanel extends GameObjects.Container {
         });
         this.titleText.setOrigin(0.5, 0.5);
 
-        this.add([this.bgPanel, this.fgPanel, this.titleText]);
+        this.add([
+            this.bgPanel,
+            this.fgPanel,
+            this.titleText,
+            this.#scrollableContent,
+        ]);
     }
 
     setTitleText(text: string) {
@@ -70,51 +66,52 @@ export class MenuPanel extends GameObjects.Container {
     }
 
     setContent(contentList: ContentItem[]) {
-        this.contentList = contentList;
-        this.add(contentList);
-    }
-
-    protected repositionContent() {
-        if (this.contentList.length === 0) {
-            return;
-        }
-
-        Phaser.Actions.AlignTo(
-            this.contentList,
-            Phaser.Display.Align.BOTTOM_CENTER,
-            0,
-            defaultGap,
-        );
+        this.#scrollableContent.setContent(contentList);
+        this.resize();
     }
 
     protected resize() {
-        getCombinedBounds(this.contentList, this.#boundingBox);
         // drawDebugRect(this.scene, this.#boundingBox, this);
-        // this.add(
-        //     addCross(
-        //         this.scene,
-        //         this.#boundingBox.centerX,
-        //         this.#boundingBox.centerY,
-        //     ),
-        // );
+        this.add(
+            addCross(
+                this.scene,
+                this.#scrollableContent.x,
+                this.#scrollableContent.y,
+                4,
+                10,
+                0xffffff,
+            ),
+        );
 
-        this.fgPanel.x = this.#boundingBox.centerX;
-        this.fgPanel.y = this.#boundingBox.centerY;
+        this.scene.add.existing(
+            addCross(
+                this.scene,
+                this.x,
+                this.y,
+                4,
+                10,
+                0x000000,
+            ),
+        ).setDepth(99);
+
+        this.fgPanel.x = this.#scrollableContent.x;
+        this.fgPanel.y = this.#scrollableContent.y;
         this.fgPanel.width = Math.max(
-            this.#boundingBox.width + defaultMargin * 2,
+            this.#scrollableContent.width + defaultMargin * 2,
             defaultMinWidth,
         );
-        this.fgPanel.height = this.#boundingBox.height + defaultMargin * 2;
+        this.fgPanel.height =
+            this.#scrollableContent.height + defaultMargin * 2;
 
-        this.bgPanel.x = this.#boundingBox.centerX;
-        this.bgPanel.y = this.#boundingBox.centerY;
+        this.bgPanel.x = this.#scrollableContent.x;
+        this.bgPanel.y = this.#scrollableContent.y;
         this.bgPanel.width = this.fgPanel.width;
         this.bgPanel.height =
             this.fgPanel.height / 2 + defaultVisibleBgPanelHeight;
 
-        this.titleText.x = this.#boundingBox.centerX;
+        this.titleText.x = this.#scrollableContent.x;
         this.titleText.y =
-            this.#boundingBox.centerY -
+            this.#scrollableContent.y -
             this.bgPanel.height +
             defaultTitleMarginTop;
     }
