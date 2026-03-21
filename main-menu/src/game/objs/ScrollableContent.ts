@@ -8,7 +8,8 @@ export interface ScrollViewport {
     height: number;
 }
 
-export interface ContentItem extends GameObjects.GameObject {
+export interface ContentItem
+    extends GameObjects.GameObject, GameObjects.Components.Mask {
     width: number;
     height: number;
     x: number;
@@ -230,20 +231,40 @@ export class ScrollableContent {
 
         this.mask = this.#maskGraphics.createGeometryMask();
         for (const item of this.contentList) {
-            (item as unknown as GameObjects.Components.Mask).setMask(this.mask);
+            item.setMask(this.mask);
         }
 
         this.#originalPositions = this.contentList.map((item) => item.y);
-        const totalContentHeight = this.#boundingBox.height + this.#props.padding * 2;
+        const totalContentHeight =
+            this.#boundingBox.height + this.#props.padding * 2;
         const viewportHeight = this.expandedBox.height;
         this.#isScrollable = totalContentHeight > viewportHeight;
-        this.#maxScroll = this.#isScrollable ? totalContentHeight - viewportHeight : 0;
+        this.#maxScroll = this.#isScrollable
+            ? totalContentHeight - viewportHeight
+            : 0;
         this.#scrollY = 0;
 
         if (this.#isScrollable) {
             this.#props.scene.input.on(
-                'wheel',
-                (_pointer: Input.Pointer, _gameObjects: GameObjects.GameObject[], _deltaX: number, deltaY: number) => {
+                "wheel",
+                (
+                    pointer: Input.Pointer,
+                    _gameObjects: GameObjects.GameObject[],
+                    _deltaX: number,
+                    deltaY: number,
+                ) => {
+                    const containerX = this.#props.container?.x ?? 0;
+                    const containerY = this.#props.container?.y ?? 0;
+                    const worldX = containerX + this.expandedBox.x;
+                    const worldY = containerY + this.expandedBox.y;
+                    if (
+                        pointer.x < worldX ||
+                        pointer.x > worldX + this.expandedBox.width ||
+                        pointer.y < worldY ||
+                        pointer.y > worldY + this.expandedBox.height
+                    ) {
+                        return;
+                    }
                     this.#scrollY = Phaser.Math.Clamp(
                         this.#scrollY + deltaY * 0.5,
                         0,
