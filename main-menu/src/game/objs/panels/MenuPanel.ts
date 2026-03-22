@@ -23,7 +23,10 @@ export class MenuPanel extends GameObjects.Container {
     constructor(scene: Scene, x: number, y: number) {
         super(scene, x, y);
 
-        this.#scrollableContent = new ScrollableContent(scene, 0, 0);
+        this.#scrollableContent = new ScrollableContent(scene, 0, 0, {
+            globalX: x,
+            globalY: y,
+        });
 
         this.fgPanel = scene.make.nineslice(
             {
@@ -83,35 +86,28 @@ export class MenuPanel extends GameObjects.Container {
             ),
         );
 
-        this.scene.add.existing(
-            addCross(
-                this.scene,
-                this.x,
-                this.y,
-                4,
-                10,
-                0x000000,
-            ),
-        ).setDepth(99);
+        this.scene.add
+            .existing(addCross(this.scene, this.x, this.y, 4, 10, 0x000000))
+            .setDepth(99);
 
-        this.fgPanel.x = this.#scrollableContent.x;
-        this.fgPanel.y = this.#scrollableContent.y;
+        this.fgPanel.x = this.#scrollableContent.getViewportCenterX();
+        this.fgPanel.y = this.#scrollableContent.getViewportCenterY();
         this.fgPanel.width = Math.max(
-            this.#scrollableContent.width + defaultMargin * 2,
+            this.#scrollableContent.getViewportWidth() + defaultMargin * 2,
             defaultMinWidth,
         );
         this.fgPanel.height =
-            this.#scrollableContent.height + defaultMargin * 2;
+            this.#scrollableContent.getViewportHeight() + defaultMargin * 2;
 
-        this.bgPanel.x = this.#scrollableContent.x;
-        this.bgPanel.y = this.#scrollableContent.y;
+        this.bgPanel.x = this.#scrollableContent.getViewportCenterX();
+        this.bgPanel.y = this.#scrollableContent.getViewportCenterY();
         this.bgPanel.width = this.fgPanel.width;
         this.bgPanel.height =
             this.fgPanel.height / 2 + defaultVisibleBgPanelHeight;
 
-        this.titleText.x = this.#scrollableContent.x;
+        this.titleText.x = this.#scrollableContent.getViewportCenterX();
         this.titleText.y =
-            this.#scrollableContent.y -
+            this.#scrollableContent.getViewportCenterY() -
             this.bgPanel.height +
             defaultTitleMarginTop;
     }
