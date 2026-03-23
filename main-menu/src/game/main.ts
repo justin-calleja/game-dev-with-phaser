@@ -1,9 +1,10 @@
 import { AUTO, Game } from "phaser";
 import { Boot } from "./scenes/Boot";
 
-// Switch between Option A and Option C to compare:
+// Switch between implementations to compare:
+import { MainMenuLayoutNode as MainMenu } from "./scenes/MainMenuLayoutNode";
 // import { MainMenuOptionA as MainMenu } from "./scenes/MainMenuOptionA";
-import { MainMenuOptionC as MainMenu } from "./scenes/MainMenuOptionC";
+// import { MainMenuOptionC as MainMenu } from "./scenes/MainMenuOptionC";
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: AUTO,
