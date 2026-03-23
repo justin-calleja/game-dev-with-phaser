@@ -15,15 +15,19 @@
 	"homepage": "https://github.com/phaserjs/template-vite-ts#readme",
 	"scripts": {
 		"dev": "vite --config vite/config.dev.mjs",
-		"build": "vite build --config vite/config.prod.mjs"
+		"build": "vite build --config vite/config.prod.mjs",
+		"build:atlas": "node scripts/pack-atlas.mjs"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.3",
+		"free-tex-packer-core": "^0.3.5",
+		"pixel-tools": "^0.9.11",
 		"typescript": "~5.7.2",
 		"vite": "^6.3.1"
 	},
 	"dependencies": {
-		"phaser": "^3.90.0",
+		"phaser": "^4.0.0-rc.6",
+		"phaser-pixui": "^0.2.1",
 		"terser": "^5.39.0"
 	}
 }

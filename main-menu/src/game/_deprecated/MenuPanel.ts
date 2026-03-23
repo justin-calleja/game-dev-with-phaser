@@ -5,7 +5,7 @@ import {
     defaultTextStyle,
     // drawDebugRect,
     getCombinedBounds,
-} from "../../../utils";
+} from "../../utils";
 
 export interface ContentItem extends GameObjects.GameObject {
     width: number;

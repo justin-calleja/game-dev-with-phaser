@@ -1,0 +1,19 @@
+# Foreground panel (grey with red border) - used as the main content frame
+- name: fg_panel
+  image: ui/button_rectangle_border.png
+  nineslice: { x: 10, y: 10, w: 172, h: 44 }
+
+# Background panel (solid red) - sits behind fg_panel for the header area
+- name: bg_panel
+  image: ui/button_square_flat.png
+  nineslice: { x: 10, y: 10, w: 44, h: 44 }
+
+# Primary button (red gradient with depth)
+- name: primary_button
+  image: ui/button_rectangle_depth_gradient.png
+  nineslice: { x: 10, y: 10, w: 172, h: 44 }
+
+# Secondary button (grey flat with depth)
+- name: secondary_button
+  image: ui/button_rectangle_depth_flat.png
+  nineslice: { x: 10, y: 10, w: 172, h: 44 }

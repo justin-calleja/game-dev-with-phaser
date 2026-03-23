@@ -1,0 +1,10 @@
+- name: mana_roots
+  size: 16
+  line_spacing: 1
+  letter_spacing: 1
+  space_width: 4
+  letters:
+    - "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    - "abcdefghijklmnopqrstuvwxyz"
+    - '0123456789!"#$%&''()*+,-./:'
+    - ";<=>?[]\\^_`{}|~@"

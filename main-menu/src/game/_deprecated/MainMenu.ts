@@ -1,5 +1,5 @@
 import { Scene } from "phaser";
-import { MainPanel } from "../objs/panels/MainPanel";
+import { MainPanel } from "./MainPanel";
 import { addCross } from "../../utils";
 
 export class MainMenu extends Scene {

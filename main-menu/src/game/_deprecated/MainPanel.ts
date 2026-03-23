@@ -1,6 +1,6 @@
 import type { Scene } from "phaser";
 import { MenuPanel } from "./MenuPanel";
-import { PrimaryButton, SecondaryButton } from "../buttons";
+import { PrimaryButton, SecondaryButton } from "./buttons";
 
 export class MainPanel extends MenuPanel {
     constructor(scene: Scene, x: number, y: number) {

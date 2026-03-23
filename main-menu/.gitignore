@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Generated atlas assets (rebuilt by pixel-tools on each build)
+public/packed_assets
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
