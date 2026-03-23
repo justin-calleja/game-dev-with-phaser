@@ -16,7 +16,5 @@ export class MainPanel extends MenuPanel {
         const btns = [btn1, btn2, btn3, btn4, btn5];
 
         this.setContent(btns);
-        this.repositionContent();
-        this.resize();
     }
 }

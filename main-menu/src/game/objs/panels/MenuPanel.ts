@@ -6,6 +6,7 @@ import {
     // drawDebugRect,
     getCombinedBounds,
 } from "../../../utils";
+import { ScrollableContent } from "../ScrollableContent";
 
 export interface ContentItem extends GameObjects.GameObject {
     width: number;
@@ -27,12 +28,11 @@ export class MenuPanel extends GameObjects.Container {
     bgPanel: GameObjects.NineSlice;
     fgPanel: GameObjects.NineSlice;
 
-    contentList: ContentItem[];
+    // contentList: ContentItem[];
+    scrollableContent: ScrollableContent;
 
     constructor(scene: Scene, x: number, y: number) {
         super(scene, x, y);
-
-        this.contentList = [];
 
         this.fgPanel = scene.make.nineslice(
             {
@@ -62,7 +62,11 @@ export class MenuPanel extends GameObjects.Container {
         });
         this.titleText.setOrigin(0.5, 0.5);
 
+        this.scrollableContent = new ScrollableContent(scene, x, y);
+
+        console.log("adding to MenuPanel container.");
         this.add([this.bgPanel, this.fgPanel, this.titleText]);
+        this.scene.add.existing(this);
     }
 
     setTitleText(text: string) {
@@ -70,25 +74,12 @@ export class MenuPanel extends GameObjects.Container {
     }
 
     setContent(contentList: ContentItem[]) {
-        this.contentList = contentList;
-        this.add(contentList);
-    }
-
-    protected repositionContent() {
-        if (this.contentList.length === 0) {
-            return;
-        }
-
-        Phaser.Actions.AlignTo(
-            this.contentList,
-            Phaser.Display.Align.BOTTOM_CENTER,
-            0,
-            defaultGap,
-        );
+        this.scrollableContent.setContent(contentList);
+        // this.add(this.scrollableContent.getContainer());
+        this.resize();
     }
 
     protected resize() {
-        getCombinedBounds(this.contentList, this.#boundingBox);
         // drawDebugRect(this.scene, this.#boundingBox, this);
         // this.add(
         //     addCross(
