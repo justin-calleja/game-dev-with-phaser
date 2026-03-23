@@ -4,6 +4,8 @@ import { TextButton } from "../objs/TextButton";
 
 const ATLAS = "menu_ui";
 const GAP = 16;
+const GAME_WIDTH = 1024;
+const GAME_HEIGHT = 768;
 
 /**
  * Option A: pixui Frame for panel layout, GameObjects.Text buttons.
@@ -15,7 +17,7 @@ export class MainMenuOptionA extends UiScene {
 		super({
 			key: "MainMenu",
 			theme: menuTheme,
-			viewportConstraints: { width: 512, height: 384 },
+			viewportConstraints: {},
 		});
 	}
 
@@ -28,13 +30,10 @@ export class MainMenuOptionA extends UiScene {
 	create() {
 		super.create();
 
-		const vw = this.viewport.width;
-		const vh = this.viewport.height;
-		const cx = Math.floor(vw / 2);
-		const cy = Math.floor(vh / 2);
+		const cx = GAME_WIDTH / 2;
+		const cy = GAME_HEIGHT / 2;
 
-		const bg = this.add.image(cx, cy, "background");
-		bg.setDisplaySize(vw, vh);
+		this.add.image(cx, cy, "background");
 
 		const btnDefs = [
 			{ text: "Start game", frame: "primary_button" },
@@ -55,14 +54,21 @@ export class MainMenuOptionA extends UiScene {
 		const fgPanelWidth = btnWidth + margin * 2;
 		const fgPanelHeight = totalBtnsHeight + margin * 2;
 
-		const panelOffsetY = -40;
+		const panelCenterY = cy - 100;
+		const panelOffsetY = panelCenterY - cy;
+
+		// bg_panel (solid red): bottom aligns with fgPanel center, extends upward.
+		// Original used setOrigin(0.5, 1) at contentCenter — replicate by
+		// computing the visual center of that rect for pixui's center-origin.
+		const bgPanelHeight = fgPanelHeight / 2 + visibleBgPanelHeight;
+		const bgPanelCenterY = panelCenterY - bgPanelHeight / 2;
 
 		this.insert.center.image({
-			y: panelOffsetY - fgPanelHeight / 4 + visibleBgPanelHeight / 2,
+			y: bgPanelCenterY - cy,
 			texture: ATLAS,
 			frame: "bg_panel",
 			width: fgPanelWidth,
-			height: fgPanelHeight / 2 + visibleBgPanelHeight,
+			height: bgPanelHeight,
 		});
 
 		this.insert.center.frame({
@@ -71,8 +77,7 @@ export class MainMenuOptionA extends UiScene {
 			height: fgPanelHeight,
 		});
 
-		const bgPanelHeight = fgPanelHeight / 2 + visibleBgPanelHeight;
-		const titleY = cy + panelOffsetY - bgPanelHeight / 2 + titleMarginTop;
+		const titleY = panelCenterY - bgPanelHeight + titleMarginTop;
 		const titleText = this.add.text(cx, titleY, "Game title", {
 			fontFamily: "Arial Black",
 			fontSize: 32,
@@ -83,8 +88,7 @@ export class MainMenuOptionA extends UiScene {
 		});
 		titleText.setOrigin(0.5, 0.5);
 
-		const startY =
-			cy + panelOffsetY - totalBtnsHeight / 2 + btnHeight / 2;
+		const startY = panelCenterY - totalBtnsHeight / 2 + btnHeight / 2;
 		for (let i = 0; i < btnDefs.length; i++) {
 			const def = btnDefs[i];
 			const btn = new TextButton(
@@ -101,3 +105,9 @@ export class MainMenuOptionA extends UiScene {
 		}
 	}
 }
+
+// pixui's ResponsiveScene computes viewport from window.innerWidth/Height,
+// but we use Scale.FIT at a fixed 1024x768. Patch the prototype so the
+// override is in place before the super() constructor chain runs.
+(MainMenuOptionA.prototype as any)._getCanvasWidth = () => GAME_WIDTH;
+(MainMenuOptionA.prototype as any)._getCanvasHeight = () => GAME_HEIGHT;

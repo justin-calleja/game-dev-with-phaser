@@ -21,19 +21,20 @@ export const menuTheme: ThemeConfig = {
 	fontTint: "light",
 
 	button: {
-		// Single-image buttons: point all states to the same frame
 		frameUp: "primary_button",
-		frameDown: "primary_button",
+		frameDown: "secondary_button",
 		frameHover: "primary_button",
-		frameDisabled: "primary_button",
+		frameDisabled: "secondary_button",
+		fontTint: "light",
 		defaultWidth: 190,
 		defaultHeight: 49,
 		styles: {
 			secondary: {
 				frameUp: "secondary_button",
 				frameDown: "secondary_button",
-				frameHover: "secondary_button",
+				frameHover: "primary_button",
 				frameDisabled: "secondary_button",
+				fontTint: "dark",
 			},
 		},
 	},

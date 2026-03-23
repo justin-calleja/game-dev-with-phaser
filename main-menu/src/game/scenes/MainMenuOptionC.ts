@@ -3,6 +3,8 @@ import { menuTheme } from "../theme";
 
 const ATLAS = "menu_ui";
 const GAP = 16;
+const GAME_WIDTH = 1024;
+const GAME_HEIGHT = 768;
 
 /**
  * Option C: full pixui end-to-end, including Button with BitmapFont.
@@ -14,7 +16,7 @@ export class MainMenuOptionC extends UiScene {
 		super({
 			key: "MainMenu",
 			theme: menuTheme,
-			viewportConstraints: { width: 512, height: 384 },
+			viewportConstraints: {},
 		});
 	}
 
@@ -27,13 +29,10 @@ export class MainMenuOptionC extends UiScene {
 	create() {
 		super.create();
 
-		const vw = this.viewport.width;
-		const vh = this.viewport.height;
-		const cx = Math.floor(vw / 2);
-		const cy = Math.floor(vh / 2);
+		const cx = GAME_WIDTH / 2;
+		const cy = GAME_HEIGHT / 2;
 
-		const bg = this.add.image(cx, cy, "background");
-		bg.setDisplaySize(vw, vh);
+		this.add.image(cx, cy, "background");
 
 		const btnWidth = 190;
 		const btnHeight = 49;
@@ -41,23 +40,27 @@ export class MainMenuOptionC extends UiScene {
 		const totalBtnsHeight = btnCount * btnHeight + (btnCount - 1) * GAP;
 		const margin = 40;
 		const visibleBgPanelHeight = 60;
+		const titleMarginTop = 36;
 
 		const fgPanelWidth = btnWidth + margin * 2;
 		const fgPanelHeight = totalBtnsHeight + margin * 2;
 
-		const panelOffsetY = -40;
+		const panelCenterY = cy - 100;
+		const panelOffsetY = panelCenterY - cy;
+
+		const bgPanelHeight = fgPanelHeight / 2 + visibleBgPanelHeight;
+		const bgPanelCenterY = panelCenterY - bgPanelHeight / 2;
 
 		this.insert.center.image({
-			y: panelOffsetY - fgPanelHeight / 4 + visibleBgPanelHeight / 2,
+			y: bgPanelCenterY - cy,
 			texture: ATLAS,
 			frame: "bg_panel",
 			width: fgPanelWidth,
-			height: fgPanelHeight / 2 + visibleBgPanelHeight,
+			height: bgPanelHeight,
 		});
 
-		const bgPanelHeight = fgPanelHeight / 2 + visibleBgPanelHeight;
 		this.insert.center.bitmapText({
-			y: panelOffsetY - bgPanelHeight / 2 + 36,
+			y: panelCenterY - bgPanelHeight + titleMarginTop - cy,
 			text: "Game title",
 			font: "mana_roots",
 			size: 16,
@@ -112,3 +115,6 @@ export class MainMenuOptionC extends UiScene {
 		});
 	}
 }
+
+(MainMenuOptionC.prototype as any)._getCanvasWidth = () => GAME_WIDTH;
+(MainMenuOptionC.prototype as any)._getCanvasHeight = () => GAME_HEIGHT;
