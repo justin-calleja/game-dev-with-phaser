@@ -1,12 +1,14 @@
 import { Geom, Scene } from "phaser";
 import { LayoutNode } from "../../ui/LayoutNode";
 import { TextButton } from "../../ui/TextButton";
-import { computeMenuLayout, createPanelLayout } from "../../ui/MenuLayout";
 import { getCombinedBounds } from "../../utils";
 
 const ATLAS = "menu_ui";
 const GAP = 16;
 const MARGIN = 40;
+const NINE_SLICE_INSET = 10;
+const VISIBLE_BG_PANEL_HEIGHT = 60;
+const TITLE_MARGIN_TOP = 36;
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 768;
 
@@ -58,7 +60,7 @@ export class MainMenuLayoutNode extends Scene {
 				new TextButton(
 					this,
 					cx,
-					cy,
+					0,
 					def.text,
 					ATLAS,
 					def.frame,
@@ -76,17 +78,60 @@ export class MainMenuLayoutNode extends Scene {
 
 		const bounds = getCombinedBounds(buttons, new Geom.Rectangle())!;
 
-		const targetCenterY = cy - 100;
-		const dy = targetCenterY - bounds.centerY;
-
 		for (const btn of buttons) {
-			btn.y += dy;
+			btn.y += cy - bounds.centerY;
 		}
 
-		getCombinedBounds(buttons, bounds);
-		const layout = computeMenuLayout(bounds, GAME_HEIGHT, MARGIN);
+		bounds.centerY = cy;
 
-		this.menuRoot = createPanelLayout(this, layout, cx);
+		this.menuRoot = this.createPanelLayout(bounds, cx);
+		this.menuRoot.update();
+
+		for (const btn of buttons) {
+			this.add.existing(btn);
+		}
+	}
+
+	/**
+	 * Build the panel + title LayoutNode tree from the button content bounds.
+	 * Creates bg_panel, fg_panel, and title text as a single subtree.
+	 */
+	private createPanelLayout(
+		contentBounds: Geom.Rectangle,
+		centerX: number,
+	): LayoutNode {
+		const fgW = contentBounds.width + MARGIN * 2;
+		const fgH = contentBounds.height + MARGIN * 2;
+		const panelCenterY = contentBounds.centerY;
+		const bgH = fgH / 2 + VISIBLE_BG_PANEL_HEIGHT;
+
+		const root = new LayoutNode({
+			x: centerX,
+			y: panelCenterY,
+			width: fgW,
+			height: fgH,
+		});
+
+		const bgNineSlice = this.add.nineslice(
+			0, 0, ATLAS, "bg_panel", fgW, bgH,
+			NINE_SLICE_INSET, NINE_SLICE_INSET, NINE_SLICE_INSET, NINE_SLICE_INSET,
+		);
+		const bgNode = new LayoutNode({
+			x: 0,
+			y: -bgH / 2,
+			width: fgW,
+			height: bgH,
+		});
+		bgNode.bind(bgNineSlice);
+		root.addChild(bgNode);
+
+		const fgNineSlice = this.add.nineslice(
+			0, 0, ATLAS, "fg_panel", fgW, fgH,
+			NINE_SLICE_INSET, NINE_SLICE_INSET, NINE_SLICE_INSET, NINE_SLICE_INSET,
+		);
+		const fgNode = new LayoutNode({ x: 0, y: 0, width: fgW, height: fgH });
+		fgNode.bind(fgNineSlice);
+		root.addChild(fgNode);
 
 		const titleText = this.add.text(0, 0, "Game title", {
 			fontFamily: "Arial Black",
@@ -97,20 +142,15 @@ export class MainMenuLayoutNode extends Scene {
 			align: "center",
 		});
 		titleText.setOrigin(0.5, 0.5);
-
 		const titleNode = new LayoutNode({
 			x: 0,
-			y: layout.titleY - layout.panelCenterY,
+			y: -bgH + TITLE_MARGIN_TOP,
 			width: 0,
 			height: 0,
 		});
 		titleNode.bind(titleText);
-		this.menuRoot.addChild(titleNode);
+		root.addChild(titleNode);
 
-		this.menuRoot.update();
-
-		for (const btn of buttons) {
-			this.add.existing(btn);
-		}
+		return root;
 	}
 }
